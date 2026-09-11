@@ -74,7 +74,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
 .tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
 .tab{background:var(--surface2);border:1.5px solid var(--border);border-radius:8px;padding:8px 13px;font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--muted);cursor:pointer}
 .tab.active{background:rgba(124,58,237,.2);border-color:var(--accent);color:var(--accent2)}
-.preview-wrap{background:#111;border-radius:12px;overflow:hidden}
+.preview-wrap{background:repeating-conic-gradient(#20202b 0 25%,#262633 0 50%) 50%/24px 24px;border:1px solid var(--border);border-radius:12px;overflow:hidden}
 iframe{width:100%;border:0;display:block;transform-origin:top left}
 .btn{width:100%;padding:16px;border:0;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:white;font-family:'Bebas Neue',sans-serif;font-size:21px;letter-spacing:3px;cursor:pointer;margin-top:14px}
 .links{display:none;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:18px;margin-top:16px}
@@ -243,7 +243,7 @@ iframe{width:100%;border:0;display:block;transform-origin:top left}
     <div class="product-controls">
       <div class="product-control" data-product-control="1">
         <div class="product-control-title">Produit 1</div>
-        <div class="slider-row"><div class="slider-label"><span>Taille</span><span class="val" id="val-product1-size">118%</span></div><input type="range" id="product1-size" min="60" max="180" value="118" oninput="onProductSlider(this)"></div>
+        <div class="slider-row"><div class="slider-label"><span>Taille</span><span class="val" id="val-product1-size">118%</span></div><input type="range" id="product1-size" min="10" max="400" value="118" oninput="onProductSlider(this)"></div>
         <div class="slider-row"><div class="slider-label"><span>Gauche / Droite</span><span class="val" id="val-product1-x">0px</span></div><input type="range" id="product1-x" min="-260" max="260" value="0" oninput="onProductSlider(this)"></div>
         <div class="slider-row"><div class="slider-label"><span>Haut / Bas</span><span class="val" id="val-product1-y">0px</span></div><input type="range" id="product1-y" min="-180" max="180" value="0" oninput="onProductSlider(this)"></div>
         <div class="slider-row"><div class="slider-label"><span>Rotation</span><span class="val" id="val-product1-rot">0°</span></div><input type="range" id="product1-rot" min="-180" max="180" value="0" oninput="onElementSlider(this)"></div>
@@ -251,7 +251,7 @@ iframe{width:100%;border:0;display:block;transform-origin:top left}
       </div>
       <div class="product-control" data-product-control="2">
         <div class="product-control-title">Produit 2</div>
-        <div class="slider-row"><div class="slider-label"><span>Taille</span><span class="val" id="val-product2-size">118%</span></div><input type="range" id="product2-size" min="60" max="180" value="118" oninput="onProductSlider(this)"></div>
+        <div class="slider-row"><div class="slider-label"><span>Taille</span><span class="val" id="val-product2-size">118%</span></div><input type="range" id="product2-size" min="10" max="400" value="118" oninput="onProductSlider(this)"></div>
         <div class="slider-row"><div class="slider-label"><span>Gauche / Droite</span><span class="val" id="val-product2-x">0px</span></div><input type="range" id="product2-x" min="-260" max="260" value="0" oninput="onProductSlider(this)"></div>
         <div class="slider-row"><div class="slider-label"><span>Haut / Bas</span><span class="val" id="val-product2-y">0px</span></div><input type="range" id="product2-y" min="-180" max="180" value="0" oninput="onProductSlider(this)"></div>
         <div class="slider-row"><div class="slider-label"><span>Rotation</span><span class="val" id="val-product2-rot">0°</span></div><input type="range" id="product2-rot" min="-180" max="180" value="0" oninput="onElementSlider(this)"></div>
@@ -259,7 +259,7 @@ iframe{width:100%;border:0;display:block;transform-origin:top left}
       </div>
       <div class="product-control" data-product-control="3">
         <div class="product-control-title">Produit 3</div>
-        <div class="slider-row"><div class="slider-label"><span>Taille</span><span class="val" id="val-product3-size">118%</span></div><input type="range" id="product3-size" min="60" max="180" value="118" oninput="onProductSlider(this)"></div>
+        <div class="slider-row"><div class="slider-label"><span>Taille</span><span class="val" id="val-product3-size">118%</span></div><input type="range" id="product3-size" min="10" max="400" value="118" oninput="onProductSlider(this)"></div>
         <div class="slider-row"><div class="slider-label"><span>Gauche / Droite</span><span class="val" id="val-product3-x">0px</span></div><input type="range" id="product3-x" min="-260" max="260" value="0" oninput="onProductSlider(this)"></div>
         <div class="slider-row"><div class="slider-label"><span>Haut / Bas</span><span class="val" id="val-product3-y">0px</span></div><input type="range" id="product3-y" min="-180" max="180" value="0" oninput="onProductSlider(this)"></div>
         <div class="slider-row"><div class="slider-label"><span>Rotation</span><span class="val" id="val-product3-rot">0°</span></div><input type="range" id="product3-rot" min="-180" max="180" value="0" oninput="onElementSlider(this)"></div>
@@ -267,7 +267,7 @@ iframe{width:100%;border:0;display:block;transform-origin:top left}
       </div>
       <div class="product-control" data-product-control="4">
         <div class="product-control-title">Produit 4</div>
-        <div class="slider-row"><div class="slider-label"><span>Taille</span><span class="val" id="val-product4-size">118%</span></div><input type="range" id="product4-size" min="60" max="180" value="118" oninput="onProductSlider(this)"></div>
+        <div class="slider-row"><div class="slider-label"><span>Taille</span><span class="val" id="val-product4-size">118%</span></div><input type="range" id="product4-size" min="10" max="400" value="118" oninput="onProductSlider(this)"></div>
         <div class="slider-row"><div class="slider-label"><span>Gauche / Droite</span><span class="val" id="val-product4-x">0px</span></div><input type="range" id="product4-x" min="-260" max="260" value="0" oninput="onProductSlider(this)"></div>
         <div class="slider-row"><div class="slider-label"><span>Haut / Bas</span><span class="val" id="val-product4-y">0px</span></div><input type="range" id="product4-y" min="-180" max="180" value="0" oninput="onProductSlider(this)"></div>
         <div class="slider-row"><div class="slider-label"><span>Rotation</span><span class="val" id="val-product4-rot">0°</span></div><input type="range" id="product4-rot" min="-180" max="180" value="0" oninput="onElementSlider(this)"></div>
@@ -275,7 +275,7 @@ iframe{width:100%;border:0;display:block;transform-origin:top left}
       </div>
       <div class="product-control" data-product-control="5">
         <div class="product-control-title">Produit 5</div>
-        <div class="slider-row"><div class="slider-label"><span>Taille</span><span class="val" id="val-product5-size">118%</span></div><input type="range" id="product5-size" min="60" max="180" value="118" oninput="onProductSlider(this)"></div>
+        <div class="slider-row"><div class="slider-label"><span>Taille</span><span class="val" id="val-product5-size">118%</span></div><input type="range" id="product5-size" min="10" max="400" value="118" oninput="onProductSlider(this)"></div>
         <div class="slider-row"><div class="slider-label"><span>Gauche / Droite</span><span class="val" id="val-product5-x">0px</span></div><input type="range" id="product5-x" min="-260" max="260" value="0" oninput="onProductSlider(this)"></div>
         <div class="slider-row"><div class="slider-label"><span>Haut / Bas</span><span class="val" id="val-product5-y">0px</span></div><input type="range" id="product5-y" min="-180" max="180" value="0" oninput="onProductSlider(this)"></div>
         <div class="slider-row"><div class="slider-label"><span>Rotation</span><span class="val" id="val-product5-rot">0°</span></div><input type="range" id="product5-rot" min="-180" max="180" value="0" oninput="onElementSlider(this)"></div>
@@ -415,6 +415,7 @@ const MAKE_WEBHOOK_URL = "https://hook.eu1.make.com/62irmz92j6x8l6a4d1v9mnpxfbtm
 // publique, même lorsque le formulaire est testé depuis le Mac.
 const BASE_URL = 'https://magicstudioapp.github.io/magic-studio';
 const MAX_PRODUCTS = 15;
+const EDITOR_MARGIN = 140;
 const urls = {};
 let currentGoodsTab = 'desktop';
 const goodsConfig = {
@@ -438,7 +439,7 @@ function extendProductFields() {
     controlsGrid.insertAdjacentHTML('beforeend', `
       <div class="product-control" data-product-control="${i}">
         <div class="product-control-title">Produit ${i}</div>
-        <div class="slider-row"><div class="slider-label"><span>Taille</span><span class="val" id="val-product${i}-size">118%</span></div><input type="range" id="product${i}-size" min="60" max="180" value="118" oninput="onProductSlider(this)"></div>
+        <div class="slider-row"><div class="slider-label"><span>Taille</span><span class="val" id="val-product${i}-size">118%</span></div><input type="range" id="product${i}-size" min="10" max="400" value="118" oninput="onProductSlider(this)"></div>
         <div class="slider-row"><div class="slider-label"><span>Gauche / Droite</span><span class="val" id="val-product${i}-x">0px</span></div><input type="range" id="product${i}-x" min="-260" max="260" value="0" oninput="onProductSlider(this)"></div>
         <div class="slider-row"><div class="slider-label"><span>Haut / Bas</span><span class="val" id="val-product${i}-y">0px</span></div><input type="range" id="product${i}-y" min="-180" max="180" value="0" oninput="onProductSlider(this)"></div>
         <div class="slider-row"><div class="slider-label"><span>Rotation</span><span class="val" id="val-product${i}-rot">0°</span></div><input type="range" id="product${i}-rot" min="-180" max="180" value="0" oninput="onElementSlider(this)"></div>
@@ -580,9 +581,10 @@ function updateMovementRanges(kind) {
   });
 }
 
-function buildUrl(kind) {
+function buildUrl(kind, preview = false) {
   const cfg = goodsConfig[kind];
-  return BASE_URL + '/' + cfg.tpl + '?' + new URLSearchParams(getParams(kind)).toString();
+  const base = preview ? new URL(cfg.tpl, window.location.href).href : BASE_URL + '/' + cfg.tpl;
+  return base + '?' + new URLSearchParams(getParams(kind)).toString();
 }
 
 async function uploadToCloudinary(input, key, zoneId, prevId) {
@@ -743,19 +745,22 @@ function switchGoodsTab(kind, tabEl) {
   const cfg = goodsConfig[kind];
   const iframe = document.getElementById('goodsIframe');
   const previewWrap = document.querySelector('.preview-wrap');
-  previewWrap.style.height = (cfg.h * cfg.scale) + 'px';
+  const editorWidth = cfg.w + EDITOR_MARGIN * 2;
+  const editorHeight = cfg.h + EDITOR_MARGIN * 2;
+  const editorScale = Math.min(cfg.scale, 900 / editorWidth);
+  previewWrap.style.height = (editorHeight * editorScale) + 'px';
   previewWrap.style.borderRadius = (kind === 'social' || kind === 'video') ? '0' : '12px';
-  iframe.style.transform = 'scale(' + cfg.scale + ')';
-  iframe.style.width = cfg.w + 'px';
-  iframe.style.height = cfg.h + 'px';
-  iframe.src = buildUrl(kind);
+  iframe.style.transform = 'scale(' + editorScale + ')';
+  iframe.style.width = editorWidth + 'px';
+  iframe.style.height = editorHeight + 'px';
+  iframe.src = buildUrl(kind, true);
 }
 
 function sendToIframe() {
   const card = document.getElementById('previewCard');
   if (!card.classList.contains('show')) return;
   const iframe = document.getElementById('goodsIframe');
-  iframe.src = buildUrl(currentGoodsTab);
+  iframe.src = buildUrl(currentGoodsTab, true);
 }
 
 function setGoodsDragControl(id, value) {
@@ -793,6 +798,134 @@ function applyGoodsDragPreview(el, type, index, x, y) {
   } else {
     el.style.transform = 'translate(' + x + 'px,' + y + 'px) scale(' + size + ') rotate(' + rot + 'deg)';
   }
+  el.ownerDocument.__refreshGoodsSelection?.();
+}
+
+function deleteGoodsProduct(index) {
+  const countSelect = document.getElementById('figure_count');
+  const count = Number(countSelect.value);
+  for (let i = index; i < count; i++) {
+    urls['figure' + i + '_url'] = urls['figure' + (i + 1) + '_url'] || '';
+    Object.keys(formatControls).forEach(kind => {
+      ['size', 'x', 'y', 'rot', 'z'].forEach(prop => {
+        formatControls[kind]['product' + i + '_' + prop] = formatControls[kind]['product' + (i + 1) + '_' + prop];
+      });
+    });
+  }
+  delete urls['figure' + count + '_url'];
+  Object.keys(formatControls).forEach(kind => {
+    ['size', 'x', 'y', 'rot', 'z'].forEach(prop => {
+      formatControls[kind]['product' + count + '_' + prop] = defaultFormatControls['product' + count + '_' + prop];
+    });
+  });
+  if (count > 1) countSelect.value = String(count - 1);
+  for (let i = 1; i <= MAX_PRODUCTS; i++) {
+    const zone = document.getElementById('zone-fig' + i);
+    const preview = document.getElementById('prev-fig' + i);
+    const label = zone?.querySelector('.upload-label');
+    const url = urls['figure' + i + '_url'];
+    zone?.classList.toggle('has-file', Boolean(url));
+    zone?.classList.remove('error', 'uploading');
+    if (preview) {
+      if (url) preview.src = url;
+      else preview.removeAttribute('src');
+    }
+    if (label) label.textContent = url ? 'Produit ' + i + ' chargé' : 'Produit ' + i;
+  }
+  updateFigureVisibility();
+  loadControlsForFormat(currentGoodsTab);
+  sendToIframe();
+}
+
+function installProductEditor(doc) {
+  const cfg = goodsConfig[currentGoodsTab];
+  const style = doc.createElement('style');
+  style.textContent = `
+    html,body{width:${cfg.w + EDITOR_MARGIN * 2}px!important;height:${cfg.h + EDITOR_MARGIN * 2}px!important;overflow:visible!important;background:transparent!important}
+    .banner{transform:translate(${EDITOR_MARGIN}px,${EDITOR_MARGIN}px);transform-origin:top left}
+    .goods-selection{position:absolute;border:3px dashed #a855f7;box-shadow:0 0 0 1px rgba(255,255,255,.8);z-index:9999;pointer-events:none}
+    .goods-handle{position:absolute;width:44px;height:44px;border:3px solid white;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#7c3aed;color:white;font:700 24px Arial;box-shadow:0 4px 14px rgba(0,0,0,.55);pointer-events:auto;touch-action:none;cursor:pointer}
+    .goods-delete{right:-24px;top:-24px;background:#ef4444}
+    .goods-rotate{left:-24px;top:-24px;cursor:grab}
+    .goods-resize{right:-24px;bottom:-24px;cursor:nwse-resize}
+  `;
+  doc.head.appendChild(style);
+  let selected = null;
+  const box = doc.createElement('div');
+  box.className = 'goods-selection';
+  box.style.display = 'none';
+  box.innerHTML = '<button class="goods-handle goods-rotate" title="Tourner">↻</button><button class="goods-handle goods-delete" title="Supprimer">×</button><button class="goods-handle goods-resize" title="Agrandir ou réduire">↘</button>';
+  doc.body.appendChild(box);
+  const refresh = () => {
+    if (!selected || !selected.el.isConnected) return;
+    const rect = selected.el.getBoundingClientRect();
+    box.style.left = rect.left + 'px';
+    box.style.top = rect.top + 'px';
+    box.style.width = rect.width + 'px';
+    box.style.height = rect.height + 'px';
+  };
+  doc.__refreshGoodsSelection = refresh;
+  doc.__selectGoodsProduct = (el, index) => {
+    selected = {el, index};
+    box.style.display = 'block';
+    refresh();
+  };
+  box.querySelector('.goods-delete').addEventListener('click', event => {
+    event.preventDefault();
+    event.stopPropagation();
+    if (selected) deleteGoodsProduct(selected.index);
+  });
+  const startHandleDrag = (handle, mode) => {
+    handle.addEventListener('pointerdown', event => {
+      if (!selected) return;
+      event.preventDefault();
+      event.stopPropagation();
+      const index = selected.index;
+      const center = selected.el.getBoundingClientRect();
+      const centerX = center.left + center.width / 2;
+      const centerY = center.top + center.height / 2;
+      const startX = event.clientX;
+      const startY = event.clientY;
+      const startSize = Number(formatControls[currentGoodsTab]['product' + index + '_size'] || 118);
+      const startRot = Number(formatControls[currentGoodsTab]['product' + index + '_rot'] || 0);
+      const startAngle = Math.atan2(startY - centerY, startX - centerX) * 180 / Math.PI;
+      handle.setPointerCapture(event.pointerId);
+      const move = moveEvent => {
+        if (!handle.hasPointerCapture(moveEvent.pointerId)) return;
+        if (mode === 'resize') {
+          const delta = ((moveEvent.clientX - startX) + (moveEvent.clientY - startY)) * .32;
+          const value = Math.max(10, Math.min(400, Math.round(startSize + delta)));
+          const control = document.getElementById('product' + index + '-size');
+          control.value = value;
+          document.getElementById('val-product' + index + '-size').textContent = value + '%';
+          formatControls[currentGoodsTab]['product' + index + '_size'] = String(value);
+        } else {
+          const angle = Math.atan2(moveEvent.clientY - centerY, moveEvent.clientX - centerX) * 180 / Math.PI;
+          let value = Math.round(startRot + angle - startAngle);
+          value = ((value + 180) % 360 + 360) % 360 - 180;
+          const control = document.getElementById('product' + index + '-rot');
+          control.value = value;
+          document.getElementById('val-product' + index + '-rot').textContent = value + '°';
+          formatControls[currentGoodsTab]['product' + index + '_rot'] = String(value);
+        }
+        const x = Number(formatControls[currentGoodsTab]['product' + index + '_x'] || 0);
+        const y = Number(formatControls[currentGoodsTab]['product' + index + '_y'] || 0);
+        applyGoodsDragPreview(selected.el, 'product', index, x, y);
+        refresh();
+      };
+      const finish = finishEvent => {
+        if (handle.hasPointerCapture(finishEvent.pointerId)) handle.releasePointerCapture(finishEvent.pointerId);
+        handle.removeEventListener('pointermove', move);
+        handle.removeEventListener('pointerup', finish);
+        handle.removeEventListener('pointercancel', finish);
+      };
+      handle.addEventListener('pointermove', move);
+      handle.addEventListener('pointerup', finish);
+      handle.addEventListener('pointercancel', finish);
+    });
+  };
+  startHandleDrag(box.querySelector('.goods-resize'), 'resize');
+  startHandleDrag(box.querySelector('.goods-rotate'), 'rotate');
 }
 
 function bindGoodsDraggable(el, type, index) {
@@ -805,6 +938,7 @@ function bindGoodsDraggable(el, type, index) {
   let startX = 0, startY = 0, baseX = 0, baseY = 0;
   el.addEventListener('pointerdown', event => {
     event.preventDefault();
+    if (type === 'product') el.ownerDocument.__selectGoodsProduct?.(el, index);
     startX = event.clientX;
     startY = event.clientY;
     baseX = Number(formatControls[currentGoodsTab][prefix + '_x'] || 0);
@@ -820,6 +954,7 @@ function bindGoodsDraggable(el, type, index) {
     formatControls[currentGoodsTab][prefix + '_x'] = String(x);
     formatControls[currentGoodsTab][prefix + '_y'] = String(y);
     applyGoodsDragPreview(el, type, index, x, y);
+    el.ownerDocument.__refreshGoodsSelection?.();
   });
   const finish = event => {
     if (el.hasPointerCapture(event.pointerId)) el.releasePointerCapture(event.pointerId);
@@ -833,6 +968,9 @@ function wirePreviewInteraction() {
   const iframe = document.getElementById('goodsIframe');
   const doc = iframe.contentDocument;
   if (!doc) return;
+  if (doc.__goodsInteractionWired) return;
+  doc.__goodsInteractionWired = true;
+  installProductEditor(doc);
   for (let i = 1; i <= 3; i++) bindGoodsDraggable(doc.querySelector('.left' + i), 'left', i);
   for (let i = 1; i <= MAX_PRODUCTS; i++) bindGoodsDraggable(doc.querySelector('.fig' + i), 'product', i);
   if (currentGoodsTab !== 'social' && currentGoodsTab !== 'video') return;

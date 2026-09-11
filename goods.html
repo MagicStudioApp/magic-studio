@@ -56,6 +56,10 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:60px;letter-spacing:2px;line-he
 .glow-control input[type=color]:disabled{opacity:.35}
 .product-controls{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:16px}
 .product-control{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:12px}
+.product-control[data-product-control]{position:relative;transition:border-color .2s,background .2s,box-shadow .2s}
+.product-control.selected-product-control{border-color:#fbbf24;background:rgba(251,191,36,.13);box-shadow:0 0 0 2px rgba(251,191,36,.22),0 10px 28px rgba(0,0,0,.24)}
+.product-control.selected-product-control:after{content:'SÉLECTIONNÉ';position:absolute;right:9px;top:9px;padding:4px 7px;border-radius:999px;background:#fbbf24;color:#17120a;font-size:8px;font-weight:900;letter-spacing:.8px}
+.product-control.selected-product-control .product-control-title{color:#fbbf24;padding-right:78px}
 .product-control-title{font-size:11px;font-weight:800;letter-spacing:1.4px;text-transform:uppercase;color:var(--accent2);margin-bottom:10px}
 .slider-row{display:flex;flex-direction:column;gap:4px;margin-bottom:8px}
 .slider-row:last-child{margin-bottom:0}
@@ -868,6 +872,9 @@ function installProductEditor(doc) {
   doc.__selectGoodsProduct = (el, index) => {
     selected = {el, index};
     box.style.display = 'block';
+    document.querySelectorAll('[data-product-control]').forEach(control => {
+      control.classList.toggle('selected-product-control', control.dataset.productControl === String(index));
+    });
     refresh();
   };
   box.querySelector('.goods-delete').addEventListener('click', event => {

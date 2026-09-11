@@ -23,6 +23,10 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:60px;letter-spacing:2px;line-he
 .num{width:24px;height:24px;background:var(--accent);border-radius:50%;font-size:12px;display:flex;align-items:center;justify-content:center;color:#fff;font-family:'DM Sans',sans-serif;font-weight:800}
 .upload-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
 .upload-grid.five{grid-template-columns:repeat(5,1fr)}
+.bulk-upload{display:flex;align-items:center;justify-content:center;gap:10px;position:relative;margin-bottom:14px;padding:13px 16px;border:1.5px dashed var(--accent2);border-radius:12px;background:rgba(124,58,237,.12);color:var(--text);font-size:12px;font-weight:800;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:all .2s}
+.bulk-upload:hover{background:rgba(124,58,237,.22)}
+.bulk-upload input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.bulk-upload-status{min-height:18px;margin:-6px 0 12px;color:var(--muted);font-size:11px;text-align:center}
 .upload-zone{position:relative;border:1.5px dashed var(--border);border-radius:12px;padding:16px 12px;text-align:center;cursor:pointer;transition:all .2s;background:var(--surface2);min-height:118px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px}
 .upload-zone:hover{border-color:var(--accent);background:rgba(124,58,237,.08)}
 .upload-zone.has-file{border-color:var(--green);background:rgba(138,154,40,.08)}
@@ -204,6 +208,11 @@ iframe{width:100%;border:0;display:block;transform-origin:top left}
         </select>
       </div>
     </div>
+    <label class="bulk-upload">
+      <input type="file" accept="image/*" multiple onchange="uploadProductsBulk(this)">
+      <span>📦 Ajouter plusieurs produits en une fois</span>
+    </label>
+    <div class="bulk-upload-status" id="bulkUploadStatus" role="status" aria-live="polite"></div>
     <div class="upload-grid five">
       <div class="upload-zone fig-zone" id="zone-fig1">
         <input type="file" accept="image/*" onchange="uploadToCloudinary(this,'figure1_url','zone-fig1','prev-fig1')">
@@ -621,6 +630,36 @@ async function uploadToCloudinary(input, key, zoneId, prevId) {
     qualityHint.classList.add('warn');
     qualityHint.textContent = 'Impossible de vérifier ou charger cette image';
   }
+}
+
+async function uploadProductsBulk(input) {
+  const files = Array.from(input.files || []).slice(0, MAX_PRODUCTS);
+  if (!files.length) return;
+  const status = document.getElementById('bulkUploadStatus');
+  const countSelect = document.getElementById('figure_count');
+  input.disabled = true;
+  countSelect.value = String(files.length);
+  updateFigureVisibility();
+  status.textContent = 'Import de ' + files.length + ' produit' + (files.length > 1 ? 's' : '') + '…';
+  let completed = 0;
+  await Promise.all(files.map(async (file, index) => {
+    const productNumber = index + 1;
+    await uploadToCloudinary(
+      {files:[file]},
+      'figure' + productNumber + '_url',
+      'zone-fig' + productNumber,
+      'prev-fig' + productNumber
+    );
+    completed++;
+    status.textContent = completed + ' / ' + files.length + ' produits traités…';
+  }));
+  input.disabled = false;
+  input.value = '';
+  const failed = files.filter((_, index) => document.getElementById('zone-fig' + (index + 1)).classList.contains('error')).length;
+  status.textContent = failed
+    ? (files.length - failed) + ' produits importés, ' + failed + ' en erreur.'
+    : files.length + ' produits importés avec succès.';
+  sendToIframe();
 }
 
 function readImageDimensions(file) {

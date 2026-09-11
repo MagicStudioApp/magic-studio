@@ -57,8 +57,10 @@ body{position:relative;font-family:Arial,sans-serif}
 <script>
 const p = new URLSearchParams(window.location.search);
 const g = key => p.get(key) || '';
-const count = Math.max(1, Math.min(5, Number(g('figure_count') || 3)));
-document.querySelector('.figures').classList.add('count-' + count);
+const count = Math.max(1, Math.min(15, Number(g('figure_count') || 3)));
+const figureBox = document.querySelector('.figures');
+for (let i = 6; i <= 15; i++) figureBox.insertAdjacentHTML('beforeend', '<img class="fig fig' + i + '" data-src="figure' + i + '_url">');
+figureBox.classList.add('count-' + count);
 const bgUrl = g('bg_url');
 if (bgUrl) document.querySelector('.bg').style.backgroundImage = "url('" + bgUrl + "')";
 else document.querySelector('.bg').style.backgroundImage = 'linear-gradient(135deg,' + (g('fallback_bg') || '#06233a') + ',' + (g('fallback_bg2') || '#2f80c9') + ')';
@@ -69,7 +71,7 @@ document.querySelectorAll('img[data-src]').forEach(img => {
     img.classList.add('missing');
     return;
   }
-  if (!url || (/figure([1-5])_url/.test(key) && Number(key.match(/figure([1-5])_url/)[1]) > count)) {
+  if (!url || (/figure(\d+)_url/.test(key) && Number(key.match(/figure(\d+)_url/)[1]) > count)) {
     img.classList.add('missing');
     return;
   }
@@ -103,7 +105,21 @@ function applyLeftControls() {
   }
 }
 function applyProductControls() {
-  for (let i = 1; i <= 5; i++) {
+  if (count > 5) {
+    const rows = count > 10 ? 3 : 2;
+    const columns = Math.ceil(count / rows);
+    const width = Math.min(330, 970 / (columns + .2) * 1.45);
+    const height = Math.min(570, width * 1.65);
+    document.querySelectorAll('.fig:not(.missing)').forEach((img, index) => {
+      const row = Math.floor(index / columns);
+      const column = index % columns;
+      img.style.left = (column * ((970 - width) / Math.max(1, columns - 1))) + 'px';
+      img.style.top = (row * 330 + (column % 2 ? 35 : 75)) + 'px';
+      img.style.width = width + 'px';
+      img.style.height = height + 'px';
+    });
+  }
+  for (let i = 1; i <= 15; i++) {
     const img = document.querySelector('.fig' + i);
     if (!img || img.classList.contains('missing')) continue;
     const size = Number(g('product' + i + '_size') || 118) / 100;

@@ -106,7 +106,7 @@ iframe{width:100%;border:0;display:block;transform-origin:top left}
   <div class="header">
     <span class="header-eyebrow">GOODS TEMPLATE</span>
     <h1>PRODUCT<br>GENERATOR</h1>
-    <p>Template produits sans texte : 3 visuels à gauche, 1 à 5 produits détourables, formats web / mobile / story.</p>
+    <p>Template produits sans texte : 3 visuels à gauche, 1 à 15 produits détourables, formats web / mobile / story.</p>
     <div class="template-switch">
       <a href="index.html">Banner TCG</a>
       <a href="goods.html" class="active">Goods / Produits</a>
@@ -173,6 +173,16 @@ iframe{width:100%;border:0;display:block;transform-origin:top left}
           <option value="3" selected>3 produits</option>
           <option value="4">4 produits</option>
           <option value="5">5 produits</option>
+          <option value="6">6 produits</option>
+          <option value="7">7 produits</option>
+          <option value="8">8 produits</option>
+          <option value="9">9 produits</option>
+          <option value="10">10 produits</option>
+          <option value="11">11 produits</option>
+          <option value="12">12 produits</option>
+          <option value="13">13 produits</option>
+          <option value="14">14 produits</option>
+          <option value="15">15 produits</option>
         </select>
       </div>
       <div class="field">
@@ -395,6 +405,7 @@ const MAKE_WEBHOOK_URL = "https://hook.eu1.make.com/62irmz92j6x8l6a4d1v9mnpxfbtm
 // locale file://. Les pages de rendu utilisent donc toujours leur adresse
 // publique, même lorsque le formulaire est testé depuis le Mac.
 const BASE_URL = 'https://magicstudioapp.github.io/magic-studio';
+const MAX_PRODUCTS = 15;
 const urls = {};
 let currentGoodsTab = 'desktop';
 const goodsConfig = {
@@ -404,13 +415,37 @@ const goodsConfig = {
   video:{w:1080,h:1920,scale:.32,tpl:'goods-video.html',label:'Goods Vidéo 5s'}
 };
 const defaultFormatControls = {};
+
+function extendProductFields() {
+  const uploadGrid = document.querySelector('.upload-grid.five');
+  const controlsGrid = document.querySelector('.product-controls:not(.logo-controls)');
+  for (let i = 6; i <= MAX_PRODUCTS; i++) {
+    uploadGrid.insertAdjacentHTML('beforeend', `
+      <div class="upload-zone fig-zone" id="zone-fig${i}">
+        <input type="file" accept="image/*" onchange="uploadToCloudinary(this,'figure${i}_url','zone-fig${i}','prev-fig${i}')">
+        <span class="upload-icon">🧍</span><div class="spinner-small" style="display:none" id="spin-fig${i}"></div><img class="preview-img" id="prev-fig${i}">
+        <span class="upload-label">Produit ${i}</span><span class="upload-sub">PNG - détourable</span>
+      </div>`);
+    controlsGrid.insertAdjacentHTML('beforeend', `
+      <div class="product-control" data-product-control="${i}">
+        <div class="product-control-title">Produit ${i}</div>
+        <div class="slider-row"><div class="slider-label"><span>Taille</span><span class="val" id="val-product${i}-size">118%</span></div><input type="range" id="product${i}-size" min="60" max="180" value="118" oninput="onProductSlider(this)"></div>
+        <div class="slider-row"><div class="slider-label"><span>Gauche / Droite</span><span class="val" id="val-product${i}-x">0px</span></div><input type="range" id="product${i}-x" min="-260" max="260" value="0" oninput="onProductSlider(this)"></div>
+        <div class="slider-row"><div class="slider-label"><span>Haut / Bas</span><span class="val" id="val-product${i}-y">0px</span></div><input type="range" id="product${i}-y" min="-180" max="180" value="0" oninput="onProductSlider(this)"></div>
+        <div class="slider-row"><div class="slider-label"><span>Rotation</span><span class="val" id="val-product${i}-rot">0°</span></div><input type="range" id="product${i}-rot" min="-180" max="180" value="0" oninput="onElementSlider(this)"></div>
+        <div class="slider-row"><div class="slider-label"><span>Calque</span><span class="val" id="val-product${i}-z">${20 + i}</span></div><input type="range" id="product${i}-z" min="1" max="50" value="${20 + i}" oninput="onProductSlider(this)"></div>
+      </div>`);
+  }
+}
+extendProductFields();
+
 for (let i = 1; i <= 3; i++) {
   defaultFormatControls['left' + i + '_size'] = '100';
   defaultFormatControls['left' + i + '_x'] = '0';
   defaultFormatControls['left' + i + '_y'] = '0';
   defaultFormatControls['left' + i + '_rot'] = '0';
 }
-for (let i = 1; i <= 5; i++) {
+for (let i = 1; i <= MAX_PRODUCTS; i++) {
   defaultFormatControls['product' + i + '_size'] = '118';
   defaultFormatControls['product' + i + '_x'] = '0';
   defaultFormatControls['product' + i + '_y'] = '0';
@@ -435,7 +470,7 @@ function getParams(kind = currentGoodsTab) {
   if (kind === currentGoodsTab) saveControlsForFormat(kind);
   const backgroundMode = document.querySelector('input[name="background_mode"]:checked')?.value || 'gradient';
   const animationEnabled = document.getElementById('animation-enabled').checked ? '1' : '0';
-  return {
+  const params = {
     template_type:'goods',
     background_mode:backgroundMode,
     background_prompt:'',
@@ -450,11 +485,6 @@ function getParams(kind = currentGoodsTab) {
     show_left1:document.getElementById('show_left1').checked ? '1' : '0',
     show_left2:document.getElementById('show_left2').checked ? '1' : '0',
     show_left3:document.getElementById('show_left3').checked ? '1' : '0',
-    figure1_url:urls.figure1_url || '',
-    figure2_url:urls.figure2_url || '',
-    figure3_url:urls.figure3_url || '',
-    figure4_url:urls.figure4_url || '',
-    figure5_url:urls.figure5_url || '',
     product_glow:document.getElementById('product_glow_enabled').checked ? document.getElementById('product_glow').value : 'transparent',
     series_text:document.getElementById('series_text').value,
     series_text_color:document.getElementById('series_text_color').value,
@@ -463,6 +493,8 @@ function getParams(kind = currentGoodsTab) {
     animSpeed:document.getElementById('animation-speed').value,
     ...formatControls[kind]
   };
+  for (let i = 1; i <= MAX_PRODUCTS; i++) params['figure' + i + '_url'] = urls['figure' + i + '_url'] || '';
+  return params;
 }
 
 function onGoodsAnimationControl() {
@@ -479,7 +511,7 @@ function saveControlsForFormat(kind = currentGoodsTab) {
       if (el) controls['left' + i + '_' + prop] = el.value;
     });
   }
-  for (let i = 1; i <= 5; i++) {
+  for (let i = 1; i <= MAX_PRODUCTS; i++) {
     ['size', 'x', 'y', 'rot', 'z'].forEach(prop => {
       const el = document.getElementById('product' + i + '-' + prop);
       if (el) controls['product' + i + '_' + prop] = el.value;
@@ -524,7 +556,7 @@ function updateMovementRanges(kind) {
     movementControls.push(document.getElementById('left' + i + '-x'));
     movementControls.push(document.getElementById('left' + i + '-y'));
   }
-  for (let i = 1; i <= 5; i++) {
+  for (let i = 1; i <= MAX_PRODUCTS; i++) {
     movementControls.push(document.getElementById('product' + i + '-x'));
     movementControls.push(document.getElementById('product' + i + '-y'));
   }
@@ -610,7 +642,7 @@ function readImageDimensions(file) {
 
 function updateFigureVisibility() {
   const count = Number(document.getElementById('figure_count').value);
-  for (let i=1; i<=5; i++) {
+  for (let i=1; i<=MAX_PRODUCTS; i++) {
     const zone = document.getElementById('zone-fig' + i);
     if (zone) zone.style.opacity = i <= count ? '1' : '.35';
     const control = document.querySelector('[data-product-control="' + i + '"]');
@@ -763,7 +795,7 @@ function wirePreviewInteraction() {
   const doc = iframe.contentDocument;
   if (!doc) return;
   for (let i = 1; i <= 3; i++) bindGoodsDraggable(doc.querySelector('.left' + i), 'left', i);
-  for (let i = 1; i <= 5; i++) bindGoodsDraggable(doc.querySelector('.fig' + i), 'product', i);
+  for (let i = 1; i <= MAX_PRODUCTS; i++) bindGoodsDraggable(doc.querySelector('.fig' + i), 'product', i);
   if (currentGoodsTab !== 'social' && currentGoodsTab !== 'video') return;
   const prefix = currentGoodsTab === 'social' ? 'story' : 'video';
   const textEl = doc.getElementById(currentGoodsTab === 'social' ? 'storyText' : 'videoText');
@@ -924,7 +956,7 @@ async function generateGoodsHD() {
 
     // Le scénario Make est linéaire : les emplacements non utilisés réemploient
     // temporairement le produit 1, puis figure_count les masque dans le rendu.
-    for (let i = 2; i <= 5; i++) {
+    for (let i = 2; i <= MAX_PRODUCTS; i++) {
       if (!payload['figure' + i + '_url']) payload['figure' + i + '_url'] = payload.figure1_url;
     }
 

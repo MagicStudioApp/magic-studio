@@ -74,8 +74,9 @@ body{position:relative;font-family:Arial,sans-serif}
 <script>
 const p = new URLSearchParams(window.location.search);
 const g = key => p.get(key) || '';
-const count = Math.max(1, Math.min(5, Number(g('figure_count') || 3)));
+const count = Math.max(1, Math.min(15, Number(g('figure_count') || 3)));
 const figureBox = document.querySelector('.figures');
+for (let i = 6; i <= 15; i++) figureBox.insertAdjacentHTML('beforeend', '<img class="fig fig' + i + '" data-src="figure' + i + '_url">');
 figureBox.classList.add('count-' + count);
 const speed = Math.max(50, Math.min(160, Number(g('video_speed') || 100))) / 100;
 const videoDuration = (count === 1 ? 4.2 : Math.max(7, count * 1.55)) / speed;
@@ -100,7 +101,7 @@ document.querySelectorAll('img[data-src]').forEach(img => {
     img.classList.add('missing');
     return;
   }
-  if (!url || (/figure([1-5])_url/.test(key) && Number(key.match(/figure([1-5])_url/)[1]) > count)) {
+  if (!url || (/figure(\d+)_url/.test(key) && Number(key.match(/figure(\d+)_url/)[1]) > count)) {
     img.classList.add('missing');
     return;
   }
@@ -119,7 +120,7 @@ function applyLeftControls() {
 }
 function applyProductControls() {
   const originals = [];
-  for (let i = 1; i <= 5; i++) {
+  for (let i = 1; i <= 15; i++) {
     const img = document.querySelector('.fig' + i);
     if (!img || img.classList.contains('missing')) continue;
     originals.push({img, i});

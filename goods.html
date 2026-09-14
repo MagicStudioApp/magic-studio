@@ -106,10 +106,21 @@ iframe{width:100%;border:0;display:block;transform-origin:top left}
 .hd-downloads.show{display:grid}
 .hd-download{display:flex;align-items:center;justify-content:center;padding:13px 10px;border:1px solid #22c55e;border-radius:10px;background:rgba(34,197,94,.12);color:#bbf7d0;text-decoration:none;font-size:12px;font-weight:800;letter-spacing:.7px;text-transform:uppercase}
 .hd-download:hover{background:rgba(34,197,94,.22)}
-.video-download{display:none;margin-top:12px;align-items:center;justify-content:center;padding:15px 12px;border:1px solid #38bdf8;border-radius:10px;background:rgba(14,165,233,.14);color:#bae6fd;text-decoration:none;font-size:13px;font-weight:800;letter-spacing:.8px;text-transform:uppercase}
-.video-download.show{display:flex}
+.video-export-panel{margin-top:16px;padding:16px;border:1px solid rgba(56,189,248,.32);border-radius:14px;background:rgba(14,165,233,.07)}
+.video-export-title{font-size:12px;font-weight:900;letter-spacing:1px;text-transform:uppercase;color:#bae6fd}
+.video-format-options{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:12px}
+.video-format-choice{display:flex;align-items:center;gap:9px;min-width:0;padding:11px 12px;border:1px solid var(--border);border-radius:10px;background:var(--surface2);cursor:pointer}
+.video-format-choice:has(input:checked){border-color:#38bdf8;background:rgba(14,165,233,.15)}
+.video-format-choice input{accent-color:#38bdf8;flex:0 0 auto}
+.video-format-choice strong{display:block;font-size:11px;line-height:1.15;letter-spacing:.7px;text-transform:uppercase}
+.video-format-choice small{display:block;margin-top:3px;color:var(--muted);font-size:10px}
+.video-export-note{margin-top:10px;color:var(--muted);font-size:11px;line-height:1.45}
+.video-downloads{display:none;margin-top:12px;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.video-downloads.show{display:grid}
+.video-download{display:flex;align-items:center;justify-content:center;padding:15px 12px;border:1px solid #38bdf8;border-radius:10px;background:rgba(14,165,233,.14);color:#bae6fd;text-decoration:none;font-size:13px;font-weight:800;letter-spacing:.8px;text-transform:uppercase}
 .video-download:hover{background:rgba(14,165,233,.24)}
-@media(max-width:620px){.hd-downloads{grid-template-columns:1fr}}
+@media(max-width:760px){.video-format-options{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:620px){.hd-downloads,.video-downloads,.video-format-options{grid-template-columns:1fr}}
 .background-mode{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
 .background-choice{display:flex;align-items:flex-start;gap:10px;padding:13px;background:var(--surface2);border:1px solid var(--border);border-radius:11px;cursor:pointer}
 .background-choice:has(input:checked){border-color:var(--accent2);background:rgba(124,58,237,.15)}
@@ -374,9 +385,19 @@ iframe{width:100%;border:0;display:block;transform-origin:top left}
   <button class="btn btn-hd" id="generateHdBtn" onclick="generateGoodsHD()">🚀 GÉNÉRER LES 3 FORMATS HD</button>
   <div class="hd-status" id="hdStatus" role="status" aria-live="polite"></div>
   <div class="hd-downloads" id="hdDownloads"></div>
-  <button class="btn btn-video" id="generateVideoBtn" onclick="generateGoodsVideo()">🎬 EXPORTER LA VIDÉO MP4</button>
+  <div class="video-export-panel">
+    <div class="video-export-title">Formats vidéo à exporter</div>
+    <div class="video-format-options">
+      <label class="video-format-choice"><input type="checkbox" data-video-format value="desktop"><span><strong>Web banner</strong><small>1562 × 395 — 5 s</small></span></label>
+      <label class="video-format-choice"><input type="checkbox" data-video-format value="mobile"><span><strong>Mobile banner</strong><small>700 × 420 — 5 s</small></span></label>
+      <label class="video-format-choice"><input type="checkbox" data-video-format value="social"><span><strong>Story / Insta</strong><small>1080 × 1920 — 5 s</small></span></label>
+      <label class="video-format-choice"><input type="checkbox" data-video-format value="video" checked><span><strong>Vertical dynamique</strong><small>1080 × 1920 — 5 s</small></span></label>
+    </div>
+    <div class="video-export-note">Cochez un ou plusieurs formats. Web, Mobile et Story reprennent la lévitation réglée dans « Animation HTML » ; le format vertical conserve son défilement dynamique.</div>
+  </div>
+  <button class="btn btn-video" id="generateVideoBtn" onclick="generateGoodsVideo()">🎬 EXPORTER LES VIDÉOS MP4 SÉLECTIONNÉES</button>
   <div class="hd-status" id="videoStatus" role="status" aria-live="polite"></div>
-  <a class="video-download" id="videoDownload" href="#">⬇ Télécharger la vidéo MP4</a>
+  <div class="video-downloads" id="videoDownloads"></div>
 
   <div class="editor-layout" id="editorLayout">
   <div class="preview-card" id="previewCard">
@@ -1272,6 +1293,15 @@ const GOODS_STATUS_WEBHOOK_URL = 'https://hook.eu1.make.com/461my7gj6h9uwh9ff2i9
 const GOODS_VIDEO_RENDER_URL = 'https://magic-studio-video-643107855979.europe-west1.run.app';
 let goodsHdPollTimer = null;
 let goodsVideoJobId = null;
+let goodsVideoExportActive = false;
+let goodsVideoCancelRequested = false;
+
+const goodsVideoFormats = {
+  desktop:{label:'Web banner', slug:'web'},
+  mobile:{label:'Mobile banner', slug:'mobile'},
+  social:{label:'Story / Insta', slug:'story'},
+  video:{label:'Vertical dynamique', slug:'vertical'}
+};
 
 function setVideoStatus(message, type) {
   const box = document.getElementById('videoStatus');
@@ -1283,18 +1313,37 @@ function waitForVideoPoll(delay) {
   return new Promise(resolve => setTimeout(resolve, delay));
 }
 
+function addVideoDownload(kind, downloadUrl, filename) {
+  const format = goodsVideoFormats[kind];
+  const link = document.createElement('a');
+  link.className = 'video-download';
+  link.href = GOODS_VIDEO_RENDER_URL + downloadUrl;
+  link.target = '_blank';
+  link.rel = 'noopener';
+  link.download = filename;
+  link.textContent = '⬇ Télécharger ' + format.label;
+  const box = document.getElementById('videoDownloads');
+  box.appendChild(link);
+  box.classList.add('show');
+}
+
 async function generateGoodsVideo() {
   const button = document.getElementById('generateVideoBtn');
-  const download = document.getElementById('videoDownload');
-  if (goodsVideoJobId) {
+  if (goodsVideoExportActive) {
+    goodsVideoCancelRequested = true;
     const jobId = goodsVideoJobId;
     goodsVideoJobId = null;
     button.disabled = true;
     button.textContent = '⏳ ANNULATION…';
-    await fetch(GOODS_VIDEO_RENDER_URL + '/api/goods-video-jobs/' + encodeURIComponent(jobId), {method:'DELETE'}).catch(() => {});
-    setVideoStatus('Export vidéo annulé.');
-    button.disabled = false;
-    button.textContent = '🎬 EXPORTER LA VIDÉO MP4';
+    if (jobId) await fetch(GOODS_VIDEO_RENDER_URL + '/api/goods-video-jobs/' + encodeURIComponent(jobId), {method:'DELETE'}).catch(() => {});
+    setVideoStatus('Export vidéo annulé. Les vidéos déjà terminées restent téléchargeables.');
+    return;
+  }
+  const selectedFormats = [...document.querySelectorAll('[data-video-format]:checked')]
+    .map(input => input.value)
+    .filter(kind => goodsVideoFormats[kind]);
+  if (!selectedFormats.length) {
+    setVideoStatus('Cochez au moins un format vidéo à exporter.', 'error');
     return;
   }
   if (!urls.figure1_url) {
@@ -1302,49 +1351,59 @@ async function generateGoodsVideo() {
     return;
   }
   saveControlsForFormat(currentGoodsTab);
-  download.classList.remove('show');
-  download.removeAttribute('href');
-  button.disabled = true;
-  button.textContent = '⏳ DÉMARRAGE DU MOTEUR…';
+  const downloads = document.getElementById('videoDownloads');
+  downloads.innerHTML = '';
+  downloads.classList.remove('show');
+  goodsVideoExportActive = true;
+  goodsVideoCancelRequested = false;
+  button.disabled = false;
+  button.textContent = '✕ ANNULER LES EXPORTS VIDÉO';
   setVideoStatus('Le moteur vidéo démarre. La première création peut prendre quelques secondes…');
   try {
-    const response = await fetch(GOODS_VIDEO_RENDER_URL + '/api/goods-video-jobs', {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        url:buildUrl('video'),
-        filename:'magic-studio-goods-' + new Date().toISOString().slice(0,10) + '.mp4'
-      })
-    });
-    const created = await response.json().catch(() => ({}));
-    if (!response.ok) throw new Error(response.status === 429 ? 'La limite de vidéos de cette heure est atteinte.' : (created.error || 'Le moteur vidéo a refusé la demande.'));
-    goodsVideoJobId = created.jobId;
-    button.disabled = false;
-    button.textContent = '✕ ANNULER L’EXPORT VIDÉO';
-    const startedAt = Date.now();
-    let job = created;
-    while (goodsVideoJobId && !['completed','failed','cancelled'].includes(job.status)) {
-      if (Date.now() - startedAt > 12 * 60 * 1000) throw new Error('La génération prend plus de temps que prévu.');
-      const label = job.status === 'queued' ? 'En attente' : (job.status === 'encoding' ? 'Encodage MP4' : 'Rendu des images');
-      setVideoStatus(label + ' — ' + (job.progress || 0) + ' %');
-      await waitForVideoPoll(1800);
-      if (!goodsVideoJobId) return;
-      const statusResponse = await fetch(GOODS_VIDEO_RENDER_URL + '/api/goods-video-jobs/' + encodeURIComponent(goodsVideoJobId), {cache:'no-store'});
-      if (!statusResponse.ok) throw new Error('Le suivi de la vidéo a été interrompu.');
-      job = await statusResponse.json();
+    for (let index = 0; index < selectedFormats.length; index++) {
+      if (goodsVideoCancelRequested) return;
+      const kind = selectedFormats[index];
+      const format = goodsVideoFormats[kind];
+      const filename = 'magic-studio-goods-' + format.slug + '-' + new Date().toISOString().slice(0,10) + '.mp4';
+      setVideoStatus(format.label + ' — démarrage (' + (index + 1) + '/' + selectedFormats.length + ')…');
+      const response = await fetch(GOODS_VIDEO_RENDER_URL + '/api/goods-video-jobs', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({url:buildUrl(kind), filename})
+      });
+      const created = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(response.status === 429 ? 'La limite de vidéos de cette heure est atteinte.' : (created.error || 'Le moteur vidéo a refusé la demande.'));
+      goodsVideoJobId = created.jobId;
+      if (goodsVideoCancelRequested) {
+        await fetch(GOODS_VIDEO_RENDER_URL + '/api/goods-video-jobs/' + encodeURIComponent(goodsVideoJobId), {method:'DELETE'}).catch(() => {});
+        return;
+      }
+      const startedAt = Date.now();
+      let job = created;
+      while (!goodsVideoCancelRequested && goodsVideoJobId && !['completed','failed','cancelled'].includes(job.status)) {
+        if (Date.now() - startedAt > 12 * 60 * 1000) throw new Error('La génération prend plus de temps que prévu.');
+        const phase = job.status === 'queued' ? 'En attente' : (job.status === 'encoding' ? 'Encodage MP4' : 'Rendu des images');
+        setVideoStatus(format.label + ' — ' + phase + ' — ' + (job.progress || 0) + ' % (' + (index + 1) + '/' + selectedFormats.length + ')');
+        await waitForVideoPoll(1800);
+        if (goodsVideoCancelRequested || !goodsVideoJobId) return;
+        const statusResponse = await fetch(GOODS_VIDEO_RENDER_URL + '/api/goods-video-jobs/' + encodeURIComponent(goodsVideoJobId), {cache:'no-store'});
+        if (!statusResponse.ok) throw new Error('Le suivi de la vidéo a été interrompu.');
+        job = await statusResponse.json();
+      }
+      if (goodsVideoCancelRequested || job.status === 'cancelled') return;
+      if (job.status === 'failed') throw new Error(job.error || 'La génération vidéo a échoué.');
+      addVideoDownload(kind, job.downloadUrl, filename);
+      goodsVideoJobId = null;
     }
-    if (!goodsVideoJobId || job.status === 'cancelled') return;
-    if (job.status === 'failed') throw new Error(job.error || 'La génération vidéo a échoué.');
-    download.href = GOODS_VIDEO_RENDER_URL + job.downloadUrl;
-    download.setAttribute('download', 'magic-studio-goods.mp4');
-    download.classList.add('show');
-    setVideoStatus('✅ La vidéo MP4 est prête au téléchargement.', 'success');
+    setVideoStatus('✅ ' + (selectedFormats.length === 1 ? 'La vidéo MP4 est prête' : 'Les ' + selectedFormats.length + ' vidéos MP4 sont prêtes') + ' au téléchargement.', 'success');
   } catch (error) {
     setVideoStatus(error.message || 'La génération vidéo a échoué.', 'error');
   } finally {
     goodsVideoJobId = null;
+    goodsVideoExportActive = false;
+    goodsVideoCancelRequested = false;
     button.disabled = false;
-    button.textContent = '🎬 EXPORTER LA VIDÉO MP4';
+    button.textContent = '🎬 EXPORTER LES VIDÉOS MP4 SÉLECTIONNÉES';
   }
 }
 

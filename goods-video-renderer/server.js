@@ -62,10 +62,10 @@ function validateSourceUrl(value) {
   }
   if (source.href.length > 120_000) throw new Error('Goods video URL is too large');
   const count = Number(source.searchParams.get('figure_count') || 1);
-  if (!Number.isInteger(count) || count < 1 || count > 15) throw new Error('Invalid product count');
+  if (!Number.isInteger(count) || count < 1 || count > 20) throw new Error('Invalid product count');
   if ((source.searchParams.get('series_text') || '').length > 500) throw new Error('Video text is too long');
   for (const [key, value] of source.searchParams) {
-    if (key === 'bg_url' || key === 'background_reference_url' || /^figure\d+_url$/.test(key) || /^left[1-3]_url$/.test(key)) {
+    if (key === 'bg_url' || key === 'background_reference_url' || /^figure\d+_url$/.test(key) || /^left[1-5]_url$/.test(key)) {
       validateCloudinaryUrl(value);
     }
   }

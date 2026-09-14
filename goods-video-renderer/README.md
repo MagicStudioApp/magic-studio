@@ -4,6 +4,7 @@ Service Cloud Run dédié à l’export MP4 de `goods-video.html`.
 
 - Entrée strictement limitée à `https://magicstudioapp.github.io/magic-studio/goods-video.html`.
 - Images distantes limitées au compte Cloudinary de Magic Studio.
+- Jusqu’à 20 produits et 5 logos par composition.
 - Vidéo verticale 1080 × 1920, H.264, 20 images/s, 5 secondes.
 - Une file de rendu par instance, une instance Cloud Run maximum recommandée.
 - Limite par défaut : 10 créations par adresse IP et par heure.

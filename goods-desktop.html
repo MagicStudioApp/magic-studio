@@ -2,6 +2,9 @@
 <html>
 <head>
 <meta charset="UTF-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{width:1562px;height:395px;overflow:hidden;background:transparent}
@@ -24,6 +27,7 @@ body{position:relative;font-family:Arial,sans-serif}
 .count-3 .fig1{left:90px;top:-14px;width:450px;height:455px}.count-3 .fig2{left:335px;top:-62px;width:540px;height:520px}.count-3 .fig3{left:650px;top:-18px;width:455px;height:465px}
 .count-4 .fig1{left:40px;top:-2px;width:365px;height:420px}.count-4 .fig2{left:250px;top:-42px;width:435px;height:465px}.count-4 .fig3{left:510px;top:-48px;width:455px;height:470px}.count-4 .fig4{left:755px;top:-2px;width:365px;height:420px}
 .count-5 .fig1{left:35px;top:12px;width:330px;height:405px}.count-5 .fig2{left:205px;top:-24px;width:395px;height:450px}.count-5 .fig3{left:405px;top:-62px;width:470px;height:495px}.count-5 .fig4{left:655px;top:-22px;width:395px;height:450px}.count-5 .fig5{left:850px;top:12px;width:330px;height:405px}
+.banner-text{position:absolute;left:510px;right:60px;bottom:48px;z-index:60;color:#fff;font-family:'Bebas Neue','Arial Black',Impact,sans-serif;font-size:52px;font-weight:400;line-height:1;text-align:center;text-transform:uppercase;letter-spacing:1px;text-shadow:0 4px 0 rgba(0,0,0,.62),0 9px 16px rgba(0,0,0,.42);white-space:pre-wrap;transform-origin:center}
 .motion-enabled .left-stack,.motion-enabled .figures{animation:goodsFloat calc(var(--motion-duration,4.8s) * var(--motion-speed-factor,1)) ease-in-out infinite;will-change:translate}
 .motion-enabled .left-stack{--motion-x:calc(-5px * var(--motion-mult,.45));--motion-y:calc(6px * var(--motion-mult,.45));--motion-duration:5.3s}
 .motion-enabled .figures{--motion-x:calc(5px * var(--motion-mult,.45));--motion-y:calc(-8px * var(--motion-mult,.45));--motion-duration:4.9s}
@@ -52,6 +56,7 @@ body{position:relative;font-family:Arial,sans-serif}
     <img class="fig fig4" data-src="figure4_url">
     <img class="fig fig5" data-src="figure5_url">
   </div>
+  <div class="banner-text" id="bannerText"></div>
 </div>
 <script>
 const p = new URLSearchParams(window.location.search);
@@ -79,6 +84,13 @@ document.querySelectorAll('img[data-src]').forEach(img => {
   img.src = url;
 });
 document.documentElement.style.setProperty('--product-glow', g('product_glow') || '#ffffff');
+const bannerText = document.getElementById('bannerText');
+bannerText.textContent = p.has('banner_text') ? p.get('banner_text') : 'Maintenant disponible';
+bannerText.style.color = /^#[0-9a-f]{6}$/i.test(g('banner_text_color')) ? g('banner_text_color') : '#ffffff';
+bannerText.style.fontSize = (52 * Math.max(20, Math.min(400, Number(g('banner_text_size') || 100))) / 100) + 'px';
+bannerText.style.bottom = (48 - Number(g('banner_text_y') || 0)) + 'px';
+bannerText.style.transform = 'translateX(' + Number(g('banner_text_x') || 0) + 'px) rotate(' + Number(g('banner_text_rot') || 0) + 'deg)';
+if (g('show_text') === '0') bannerText.classList.add('missing');
 function configureMotion() {
   if (g('animation') !== '1') return;
   const intensity = Math.max(0, Math.min(100, Number(g('animIntensity') || 45))) / 100;
@@ -130,6 +142,7 @@ function applyProductControls() {
 applyLeftControls();
 applyProductControls();
 configureMotion();
+document.fonts?.ready?.then(() => document.documentElement.classList.add('fonts-ready'));
 </script>
 </body>
 </html>

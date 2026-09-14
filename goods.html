@@ -67,6 +67,7 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:60px;letter-spacing:2px;line-he
 .slider-label{display:flex;justify-content:space-between;gap:8px}
 .slider-label span{font-size:10px;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.6px}
 .slider-label .val{color:var(--text)}
+#banner-text-color{width:100%;height:38px;padding:3px;border:1px solid var(--border);border-radius:8px;background:var(--surface);cursor:pointer}
 input[type=range]{width:100%;height:3px;-webkit-appearance:none;background:var(--border);border-radius:2px;outline:none;cursor:pointer;accent-color:var(--accent2)}
 input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--accent2);border:2px solid var(--bg)}
 .hint{font-size:12px;color:#fbbf24;margin-top:10px}
@@ -115,12 +116,8 @@ iframe{width:100%;border:0;display:block;transform-origin:top left}
 .video-format-choice strong{display:block;font-size:11px;line-height:1.15;letter-spacing:.7px;text-transform:uppercase}
 .video-format-choice small{display:block;margin-top:3px;color:var(--muted);font-size:10px}
 .video-export-note{margin-top:10px;color:var(--muted);font-size:11px;line-height:1.45}
-.video-downloads{display:none;margin-top:12px;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-.video-downloads.show{display:grid}
-.video-download{display:flex;align-items:center;justify-content:center;padding:15px 12px;border:1px solid #38bdf8;border-radius:10px;background:rgba(14,165,233,.14);color:#bae6fd;text-decoration:none;font-size:13px;font-weight:800;letter-spacing:.8px;text-transform:uppercase}
-.video-download:hover{background:rgba(14,165,233,.24)}
 @media(max-width:760px){.video-format-options{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:620px){.hd-downloads,.video-downloads,.video-format-options{grid-template-columns:1fr}}
+@media(max-width:620px){.hd-downloads,.video-format-options{grid-template-columns:1fr}}
 .background-mode{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
 .background-choice{display:flex;align-items:flex-start;gap:10px;padding:13px;background:var(--surface2);border:1px solid var(--border);border-radius:11px;cursor:pointer}
 .background-choice:has(input:checked){border-color:var(--accent2);background:rgba(124,58,237,.15)}
@@ -262,11 +259,15 @@ iframe{width:100%;border:0;display:block;transform-origin:top left}
         <textarea id="series_text" oninput="sendToIframe()" placeholder="Série maintenant disponible !">Série maintenant disponible !</textarea>
       </div>
       <div class="field">
-        <label>Couleur du texte</label>
+        <label>Couleur Story / Vidéo</label>
         <select id="series_text_color" onchange="sendToIframe()">
           <option value="#ffffff" selected>Blanc</option>
           <option value="#000000">Noir</option>
         </select>
+      </div>
+      <div class="field">
+        <label>Texte Web / Mobile</label>
+        <textarea id="banner_text" oninput="sendToIframe()" placeholder="Maintenant disponible">Maintenant disponible</textarea>
       </div>
     </div>
     <label class="bulk-upload">
@@ -393,11 +394,10 @@ iframe{width:100%;border:0;display:block;transform-origin:top left}
       <label class="video-format-choice"><input type="checkbox" data-video-format value="social"><span><strong>Story / Insta</strong><small>1080 × 1920 — 5 s</small></span></label>
       <label class="video-format-choice"><input type="checkbox" data-video-format value="video" checked><span><strong>Vertical dynamique</strong><small>1080 × 1920 — 5 s</small></span></label>
     </div>
-    <div class="video-export-note">Cochez un ou plusieurs formats. Web, Mobile et Story reprennent la lévitation réglée dans « Animation HTML » ; le format vertical conserve son défilement dynamique.</div>
+    <div class="video-export-note">Cochez un ou plusieurs formats. Web, Mobile et Story reprennent la lévitation réglée dans « Animation HTML ». À la fin, un ZIP contenant tous les MP4 est automatiquement envoyé dans vos téléchargements.</div>
   </div>
-  <button class="btn btn-video" id="generateVideoBtn" onclick="generateGoodsVideo()">🎬 EXPORTER LES VIDÉOS MP4 SÉLECTIONNÉES</button>
+  <button class="btn btn-video" id="generateVideoBtn" onclick="generateGoodsVideo()">🎬 EXPORTER ET TÉLÉCHARGER LE ZIP</button>
   <div class="hd-status" id="videoStatus" role="status" aria-live="polite"></div>
-  <div class="video-downloads" id="videoDownloads"></div>
 
   <div class="editor-layout" id="editorLayout">
   <div class="preview-card" id="previewCard">
@@ -416,6 +416,33 @@ iframe{width:100%;border:0;display:block;transform-origin:top left}
     <div class="text-toolbar" id="textToolbar">
       <button type="button" class="add-text-btn" onclick="addGoodsText()">＋ Ajouter un texte</button>
       <span>Ajoutez jusqu’à 8 textes, puis déplacez-les et modifiez-les directement dans l’aperçu.</span>
+    </div>
+    <div class="product-control" id="bannerTextControls" style="margin-top:18px;display:none">
+      <div class="product-control-title" id="bannerTextControlsTitle">Texte Web</div>
+      <label class="toggle-pill" style="margin-bottom:12px"><input type="checkbox" id="banner-text-visible" checked onchange="setBannerTextVisibility(this.checked)"> Afficher le texte</label>
+      <div class="field-row">
+        <div class="slider-row">
+          <div class="slider-label"><span>Couleur</span></div>
+          <input type="color" id="banner-text-color" value="#ffffff" oninput="onElementSlider(this)">
+        </div>
+        <div class="slider-row">
+          <div class="slider-label"><span>Taille du texte</span><span class="val" id="val-banner-text-size">100%</span></div>
+          <input type="range" id="banner-text-size" min="20" max="400" value="100" oninput="onElementSlider(this)">
+        </div>
+        <div class="slider-row">
+          <div class="slider-label"><span>Gauche / Droite</span><span class="val" id="val-banner-text-x">0px</span></div>
+          <input type="range" id="banner-text-x" min="-700" max="700" value="0" oninput="onElementSlider(this)">
+        </div>
+        <div class="slider-row">
+          <div class="slider-label"><span>Monter / Descendre</span><span class="val" id="val-banner-text-y">0px</span></div>
+          <input type="range" id="banner-text-y" min="-400" max="400" value="0" oninput="onElementSlider(this)">
+        </div>
+        <div class="slider-row">
+          <div class="slider-label"><span>Rotation du texte</span><span class="val" id="val-banner-text-rot">0°</span></div>
+          <input type="range" id="banner-text-rot" min="-180" max="180" value="0" oninput="onElementSlider(this)">
+        </div>
+      </div>
+      <div class="hint">Cliquez le texte sur le visuel pour l’éditer, le déplacer, le tourner, l’agrandir, le supprimer ou le verrouiller avec le cadenas.</div>
     </div>
     <div class="product-control" id="storyTextControls" style="margin-top:18px;display:none">
       <div class="product-control-title">Texte Story / Instagram</div>
@@ -556,6 +583,11 @@ defaultFormatControls.story_text_size = '100';
 defaultFormatControls.story_text_x = '0';
 defaultFormatControls.story_text_y = '0';
 defaultFormatControls.story_text_rot = '0';
+defaultFormatControls.banner_text_size = '100';
+defaultFormatControls.banner_text_x = '0';
+defaultFormatControls.banner_text_y = '0';
+defaultFormatControls.banner_text_rot = '0';
+defaultFormatControls.banner_text_color = '#ffffff';
 const formatControls = {};
 const extraTexts = {};
 const primaryTextVisible = {};
@@ -581,6 +613,7 @@ function getParams(kind = currentGoodsTab) {
     fallback_bg2:document.getElementById('fallback_bg2').value,
     bg_url:backgroundMode === 'upload' ? (urls.bg_url || '') : '',
     product_glow:document.getElementById('product_glow_enabled').checked ? document.getElementById('product_glow').value : 'transparent',
+    banner_text:document.getElementById('banner_text').value,
     series_text:document.getElementById('series_text').value,
     series_text_color:document.getElementById('series_text_color').value,
     show_text:primaryTextVisible[kind] ? '1' : '0',
@@ -627,6 +660,11 @@ function saveControlsForFormat(kind = currentGoodsTab) {
   controls.story_text_x = document.getElementById('story-text-x').value;
   controls.story_text_y = document.getElementById('story-text-y').value;
   controls.story_text_rot = document.getElementById('story-text-rot').value;
+  controls.banner_text_size = document.getElementById('banner-text-size').value;
+  controls.banner_text_x = document.getElementById('banner-text-x').value;
+  controls.banner_text_y = document.getElementById('banner-text-y').value;
+  controls.banner_text_rot = document.getElementById('banner-text-rot').value;
+  controls.banner_text_color = document.getElementById('banner-text-color').value;
 }
 
 function loadControlsForFormat(kind) {
@@ -642,10 +680,19 @@ function loadControlsForFormat(kind) {
     if (val) val.textContent = value + unit;
   });
   document.getElementById('controlsFormatLabel').textContent = goodsConfig[kind].label;
+  const isBanner = kind === 'desktop' || kind === 'mobile';
+  document.getElementById('bannerTextControls').style.display = isBanner ? 'block' : 'none';
+  document.getElementById('bannerTextControlsTitle').textContent = kind === 'mobile' ? 'Texte Mobile' : 'Texte Web';
+  document.getElementById('banner-text-visible').checked = primaryTextVisible[kind];
   document.getElementById('storyTextControls').style.display = kind === 'social' ? 'block' : 'none';
   document.getElementById('videoTextControls').style.display = kind === 'video' ? 'block' : 'none';
   document.getElementById('textToolbar').classList.toggle('show', kind === 'social' || kind === 'video');
   document.getElementById('animationControls').style.display = kind === 'video' ? 'none' : 'block';
+}
+
+function setBannerTextVisibility(visible) {
+  primaryTextVisible[currentGoodsTab] = Boolean(visible);
+  sendToIframe();
 }
 
 function addGoodsText() {
@@ -690,6 +737,8 @@ function updateMovementRanges(kind) {
   movementControls.push(document.getElementById('story-text-y'));
   movementControls.push(document.getElementById('video-text-x'));
   movementControls.push(document.getElementById('video-text-y'));
+  movementControls.push(document.getElementById('banner-text-x'));
+  movementControls.push(document.getElementById('banner-text-y'));
   movementControls.filter(Boolean).forEach(control => {
     const limit = control.id.endsWith('-x') ? horizontalLimit : verticalLimit;
     control.min = String(-limit);
@@ -979,7 +1028,10 @@ function getExtraText(item) {
 function getGoodsItemPrefix(item) {
   if (item.type === 'product') return 'product' + item.index;
   if (item.type === 'left') return 'left' + item.index;
-  if (item.type === 'primary-text') return (currentGoodsTab === 'social' ? 'story' : 'video') + '_text';
+  if (item.type === 'primary-text') {
+    if (currentGoodsTab === 'desktop' || currentGoodsTab === 'mobile') return 'banner_text';
+    return (currentGoodsTab === 'social' ? 'story' : 'video') + '_text';
+  }
   return '';
 }
 
@@ -1026,8 +1078,14 @@ function applyGoodsItemPreview(item) {
     return;
   }
   if (item.type === 'primary-text') {
-    item.el.style.fontSize = (82 * values.size / 100) + 'px';
-    item.el.style.bottom = ((currentGoodsTab === 'social' ? 110 : 300) - values.y) + 'px';
+    const textLayout = {
+      desktop:{fontSize:52, bottom:48},
+      mobile:{fontSize:38, bottom:36},
+      social:{fontSize:82, bottom:110},
+      video:{fontSize:82, bottom:300}
+    }[currentGoodsTab];
+    item.el.style.fontSize = (textLayout.fontSize * values.size / 100) + 'px';
+    item.el.style.bottom = (textLayout.bottom - values.y) + 'px';
     if (currentGoodsTab === 'video') {
       item.el.style.setProperty('--text-x', values.x + 'px');
       item.el.style.setProperty('--text-rot', values.rot + 'deg');
@@ -1046,7 +1104,10 @@ function deleteGoodsItems(items) {
   unlocked.filter(item => item.type === 'extra-text').forEach(item => {
     extraTexts[currentGoodsTab] = extraTexts[currentGoodsTab].filter(text => text.id !== item.index);
   });
-  if (unlocked.some(item => item.type === 'primary-text')) primaryTextVisible[currentGoodsTab] = false;
+  if (unlocked.some(item => item.type === 'primary-text')) {
+    primaryTextVisible[currentGoodsTab] = false;
+    if (currentGoodsTab === 'desktop' || currentGoodsTab === 'mobile') document.getElementById('banner-text-visible').checked = false;
+  }
   products.forEach(index => deleteGoodsProduct(index, false));
   if (products.length) lockedItems[currentGoodsTab].clear();
   loadControlsForFormat(currentGoodsTab);
@@ -1246,15 +1307,16 @@ function wirePreviewInteraction() {
   installGoodsEditor(doc);
   for (let i = 1; i <= MAX_LOGOS; i++) bindGoodsDraggable(doc.querySelector('.left' + i), 'left', i);
   for (let i = 1; i <= MAX_PRODUCTS; i++) bindGoodsDraggable(doc.querySelector('.fig' + i), 'product', i);
-  if (currentGoodsTab !== 'social' && currentGoodsTab !== 'video') return;
-  const textEl = doc.getElementById(currentGoodsTab === 'social' ? 'storyText' : 'videoText');
+  const primaryTextIds = {desktop:'bannerText', mobile:'bannerText', social:'storyText', video:'videoText'};
+  const textEl = doc.getElementById(primaryTextIds[currentGoodsTab]);
   if (textEl) {
     textEl.contentEditable = 'true';
     textEl.spellcheck = false;
     doc.__goodsEditor.bind(textEl, 'primary-text', 'primary', value => {
-      document.getElementById('series_text').value = value;
+      document.getElementById(currentGoodsTab === 'desktop' || currentGoodsTab === 'mobile' ? 'banner_text' : 'series_text').value = value;
     });
   }
+  if (currentGoodsTab !== 'social' && currentGoodsTab !== 'video') return;
   doc.querySelectorAll('.extra-text[data-text-id]').forEach(el => {
     el.contentEditable = 'true';
     el.spellcheck = false;
@@ -1313,18 +1375,24 @@ function waitForVideoPoll(delay) {
   return new Promise(resolve => setTimeout(resolve, delay));
 }
 
-function addVideoDownload(kind, downloadUrl, filename) {
-  const format = goodsVideoFormats[kind];
+async function downloadGoodsVideoZip(jobIds, filename) {
+  const query = new URLSearchParams({jobs:jobIds.join(','), filename});
+  const response = await fetch(GOODS_VIDEO_RENDER_URL + '/api/goods-video-zip?' + query);
+  if (!response.ok) {
+    const result = await response.json().catch(() => ({}));
+    throw new Error(result.error || 'Le ZIP n’a pas pu être créé.');
+  }
+  const blob = await response.blob();
+  if (!blob.size) throw new Error('Le ZIP reçu est vide.');
+  const objectUrl = URL.createObjectURL(blob);
   const link = document.createElement('a');
-  link.className = 'video-download';
-  link.href = GOODS_VIDEO_RENDER_URL + downloadUrl;
-  link.target = '_blank';
-  link.rel = 'noopener';
+  link.href = objectUrl;
   link.download = filename;
-  link.textContent = '⬇ Télécharger ' + format.label;
-  const box = document.getElementById('videoDownloads');
-  box.appendChild(link);
-  box.classList.add('show');
+  link.style.display = 'none';
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  setTimeout(() => URL.revokeObjectURL(objectUrl), 60_000);
 }
 
 async function generateGoodsVideo() {
@@ -1336,7 +1404,7 @@ async function generateGoodsVideo() {
     button.disabled = true;
     button.textContent = '⏳ ANNULATION…';
     if (jobId) await fetch(GOODS_VIDEO_RENDER_URL + '/api/goods-video-jobs/' + encodeURIComponent(jobId), {method:'DELETE'}).catch(() => {});
-    setVideoStatus('Export vidéo annulé. Les vidéos déjà terminées restent téléchargeables.');
+    setVideoStatus('Export vidéo annulé.');
     return;
   }
   const selectedFormats = [...document.querySelectorAll('[data-video-format]:checked')]
@@ -1351,14 +1419,12 @@ async function generateGoodsVideo() {
     return;
   }
   saveControlsForFormat(currentGoodsTab);
-  const downloads = document.getElementById('videoDownloads');
-  downloads.innerHTML = '';
-  downloads.classList.remove('show');
   goodsVideoExportActive = true;
   goodsVideoCancelRequested = false;
   button.disabled = false;
   button.textContent = '✕ ANNULER LES EXPORTS VIDÉO';
   setVideoStatus('Le moteur vidéo démarre. La première création peut prendre quelques secondes…');
+  const completedJobIds = [];
   try {
     for (let index = 0; index < selectedFormats.length; index++) {
       if (goodsVideoCancelRequested) return;
@@ -1392,10 +1458,13 @@ async function generateGoodsVideo() {
       }
       if (goodsVideoCancelRequested || job.status === 'cancelled') return;
       if (job.status === 'failed') throw new Error(job.error || 'La génération vidéo a échoué.');
-      addVideoDownload(kind, job.downloadUrl, filename);
+      completedJobIds.push(goodsVideoJobId);
       goodsVideoJobId = null;
     }
-    setVideoStatus('✅ ' + (selectedFormats.length === 1 ? 'La vidéo MP4 est prête' : 'Les ' + selectedFormats.length + ' vidéos MP4 sont prêtes') + ' au téléchargement.', 'success');
+    const zipFilename = 'magic-studio-goods-' + new Date().toISOString().slice(0,10) + '.zip';
+    setVideoStatus('Création du ZIP et envoi vers vos téléchargements…');
+    await downloadGoodsVideoZip(completedJobIds, zipFilename);
+    setVideoStatus('✅ ZIP téléchargé automatiquement avec ' + (selectedFormats.length === 1 ? 'la vidéo MP4.' : 'les ' + selectedFormats.length + ' vidéos MP4.'), 'success');
   } catch (error) {
     setVideoStatus(error.message || 'La génération vidéo a échoué.', 'error');
   } finally {
@@ -1403,7 +1472,7 @@ async function generateGoodsVideo() {
     goodsVideoExportActive = false;
     goodsVideoCancelRequested = false;
     button.disabled = false;
-    button.textContent = '🎬 EXPORTER LES VIDÉOS MP4 SÉLECTIONNÉES';
+    button.textContent = '🎬 EXPORTER ET TÉLÉCHARGER LE ZIP';
   }
 }
 

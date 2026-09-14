@@ -6,30 +6,28 @@
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{width:700px;height:420px;overflow:hidden;background:transparent}
 body{position:relative;font-family:Arial,sans-serif}
-.banner{position:absolute;left:10px;top:10px;width:680px;height:400px;overflow:visible;background:transparent}
-.frame{position:absolute;left:0;right:0;top:0;bottom:38px;border-radius:28px;overflow:hidden;background:#06182a;box-shadow:0 8px 24px rgba(0,0,0,.45)}
+.banner{position:absolute;left:10px;top:4px;width:680px;height:412px;overflow:visible;background:transparent}
+.frame{position:absolute;left:0;right:0;top:0;bottom:18px;border-radius:28px;overflow:hidden;background:#06182a;box-shadow:0 8px 24px rgba(0,0,0,.45)}
 .bg{position:absolute;inset:0;background:transparent;background-size:cover;background-position:center;filter:none}
 .smoke{display:none}
-.left-stack{position:absolute;left:18px;top:18px;width:650px;height:360px;z-index:40;pointer-events:none}
+.left-stack{position:absolute;left:18px;top:10px;width:650px;height:380px;z-index:40;pointer-events:none}
 .left-img{position:absolute;object-fit:contain;filter:drop-shadow(2px 6px 3px rgba(18,24,34,.28));pointer-events:auto}
 .left1{left:-52px!important;top:-22px!important;width:170px;height:128px;transform:perspective(260px) rotateY(-14deg) rotateZ(-5deg);transform-origin:center center}
 .left2{left:210px!important;top:0!important;width:250px;height:118px}
 .left3{left:486px!important;top:0!important;width:178px;height:92px}
 .left4{left:82px!important;top:132px!important;width:220px;height:100px}
 .left5{left:345px!important;top:132px!important;width:220px;height:100px}
-.figures{position:absolute;left:185px;top:48px;width:520px;height:420px;z-index:30}
+.figures{position:absolute;left:185px;top:30px;width:520px;height:430px;z-index:30}
 .fig{position:absolute;object-fit:contain;filter:drop-shadow(0 0 6px var(--product-glow,#fff));transform-origin:center bottom}
 .count-1 .fig1{left:105px;top:0;width:300px;height:410px}
 .count-2 .fig1{left:30px;top:20px;width:250px;height:385px}.count-2 .fig2{left:220px;top:12px;width:255px;height:390px}
 .count-3 .fig1{left:0;top:48px;width:205px;height:340px}.count-3 .fig2{left:140px;top:6px;width:260px;height:400px}.count-3 .fig3{left:300px;top:44px;width:210px;height:345px}
 .count-4 .fig1{left:0;top:74px;width:175px;height:315px}.count-4 .fig2{left:105px;top:34px;width:220px;height:360px}.count-4 .fig3{left:245px;top:30px;width:225px;height:365px}.count-4 .fig4{left:350px;top:76px;width:175px;height:315px}
 .count-5 .fig1{left:-5px;top:90px;width:150px;height:290px}.count-5 .fig2{left:76px;top:54px;width:190px;height:330px}.count-5 .fig3{left:178px;top:24px;width:230px;height:365px}.count-5 .fig4{left:310px;top:54px;width:190px;height:330px}.count-5 .fig5{left:400px;top:90px;width:150px;height:290px}
-.motion-enabled .bg{animation:goodsBgDrift calc(8s * var(--motion-speed-factor,1)) ease-in-out infinite alternate;transform-origin:center}
 .motion-enabled .left-stack,.motion-enabled .figures{animation:goodsFloat calc(var(--motion-duration,4.8s) * var(--motion-speed-factor,1)) ease-in-out infinite;will-change:translate}
 .motion-enabled .left-stack{--motion-x:calc(-5px * var(--motion-mult,.45));--motion-y:calc(6px * var(--motion-mult,.45));--motion-duration:5.3s}
 .motion-enabled .figures{--motion-x:calc(5px * var(--motion-mult,.45));--motion-y:calc(-8px * var(--motion-mult,.45));--motion-duration:4.9s}
 @keyframes goodsFloat{0%,100%{translate:0 0}50%{translate:var(--motion-x,0) var(--motion-y,-6px)}}
-@keyframes goodsBgDrift{0%{transform:scale(1)}100%{transform:scale(1.035)}}
 @media (prefers-reduced-motion:reduce){.motion-enabled *{animation:none!important}}
 .missing{display:none}
 </style>

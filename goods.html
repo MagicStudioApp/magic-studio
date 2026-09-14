@@ -57,7 +57,7 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:60px;letter-spacing:2px;line-he
 .glow-control input[type=color]:disabled{opacity:.35}
 .product-controls{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:16px}
 .product-control{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:12px}
-.product-control[data-product-control]{position:relative;transition:border-color .2s,background .2s,box-shadow .2s}
+.product-control[data-product-control],.product-control[data-logo-control]{position:relative;transition:border-color .2s,background .2s,box-shadow .2s}
 .product-control.selected-product-control{border-color:#fbbf24;background:rgba(251,191,36,.13);box-shadow:0 0 0 2px rgba(251,191,36,.22),0 10px 28px rgba(0,0,0,.24)}
 .product-control.selected-product-control:after{content:'SÉLECTIONNÉ';position:absolute;right:9px;top:9px;padding:4px 7px;border-radius:999px;background:#fbbf24;color:#17120a;font-size:8px;font-weight:900;letter-spacing:.8px}
 .product-control.selected-product-control .product-control-title{color:#fbbf24;padding-right:78px}
@@ -74,6 +74,15 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
 .preview-card.show{display:block;position:sticky;top:10px;z-index:100;box-shadow:0 18px 42px rgba(0,0,0,.58)}
 #controlDock{display:none}
 .control-dock{margin-top:16px}
+.editor-layout.vertical{display:grid;grid-template-columns:minmax(470px,620px) minmax(480px,1fr);gap:16px;align-items:start}
+.editor-layout.vertical .preview-card.show,.editor-layout.vertical .control-dock{position:sticky;top:10px}
+.editor-layout.vertical .control-dock{max-height:calc(100vh - 20px);overflow:auto}
+.editor-layout.vertical .product-controls{grid-template-columns:repeat(2,minmax(0,1fr))}
+body.vertical-editor .container{max-width:1500px}
+.text-toolbar{display:none;align-items:center;gap:12px;margin:18px 0 4px;padding:12px;border:1px solid rgba(168,85,247,.35);border-radius:12px;background:rgba(124,58,237,.1)}
+.text-toolbar.show{display:flex}
+.add-text-btn{border:0;border-radius:9px;padding:11px 14px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:white;font:800 11px 'DM Sans',sans-serif;letter-spacing:.8px;text-transform:uppercase;cursor:pointer}
+.text-toolbar span{font-size:11px;color:var(--muted);line-height:1.4}
 .reset-format-btn{width:auto;padding:10px 15px;border:1px solid var(--border);border-radius:9px;background:var(--surface2);color:var(--muted);font-family:'DM Sans',sans-serif;font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;cursor:pointer;margin-top:18px}
 .reset-format-btn:hover{border-color:var(--accent2);color:var(--accent2)}
 .tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
@@ -110,8 +119,9 @@ iframe{width:100%;border:0;display:block;transform-origin:top left}
 .background-panel[hidden]{display:none}
 .background-prompt{margin-top:10px}
 @media(max-width:620px){.background-mode{grid-template-columns:1fr}}
-@media(max-width:900px){.product-controls{grid-template-columns:1fr 1fr}}
-@media(max-width:760px){.upload-grid,.upload-grid.five,.field-row,.product-controls,.toggle-row{grid-template-columns:1fr}.card{padding:22px}h1{font-size:48px}}
+@media(max-width:1100px){.editor-layout.vertical{display:block}.editor-layout.vertical .preview-card.show,.editor-layout.vertical .control-dock{position:relative;top:auto;max-height:none;overflow:visible}}
+@media(max-width:900px){.product-controls,.editor-layout.vertical .product-controls{grid-template-columns:1fr 1fr}}
+@media(max-width:760px){body{padding:20px 10px 40px}.header{margin-bottom:18px}.upload-grid,.upload-grid.five,.field-row,.product-controls,.editor-layout.vertical .product-controls,.toggle-row{grid-template-columns:1fr}.card{padding:22px}h1{font-size:48px}}
 </style>
 </head>
 <body>
@@ -165,35 +175,35 @@ iframe{width:100%;border:0;display:block;transform-origin:top left}
     <div class="product-controls logo-controls">
       <div class="product-control">
         <div class="product-control-title">Logo 1</div>
-        <div class="slider-row"><div class="slider-label"><span>Taille</span><span class="val" id="val-left1-size">100%</span></div><input type="range" id="left1-size" min="40" max="220" value="100" oninput="onElementSlider(this)"></div>
+        <div class="slider-row"><div class="slider-label"><span>Taille</span><span class="val" id="val-left1-size">100%</span></div><input type="range" id="left1-size" min="10" max="400" value="100" oninput="onElementSlider(this)"></div>
         <div class="slider-row"><div class="slider-label"><span>Gauche / Droite</span><span class="val" id="val-left1-x">0px</span></div><input type="range" id="left1-x" min="-300" max="300" value="0" oninput="onElementSlider(this)"></div>
         <div class="slider-row"><div class="slider-label"><span>Haut / Bas</span><span class="val" id="val-left1-y">0px</span></div><input type="range" id="left1-y" min="-220" max="220" value="0" oninput="onElementSlider(this)"></div>
         <div class="slider-row"><div class="slider-label"><span>Rotation</span><span class="val" id="val-left1-rot">0°</span></div><input type="range" id="left1-rot" min="-180" max="180" value="0" oninput="onElementSlider(this)"></div>
       </div>
       <div class="product-control">
         <div class="product-control-title">Logo 2</div>
-        <div class="slider-row"><div class="slider-label"><span>Taille</span><span class="val" id="val-left2-size">100%</span></div><input type="range" id="left2-size" min="40" max="220" value="100" oninput="onElementSlider(this)"></div>
+        <div class="slider-row"><div class="slider-label"><span>Taille</span><span class="val" id="val-left2-size">100%</span></div><input type="range" id="left2-size" min="10" max="400" value="100" oninput="onElementSlider(this)"></div>
         <div class="slider-row"><div class="slider-label"><span>Gauche / Droite</span><span class="val" id="val-left2-x">0px</span></div><input type="range" id="left2-x" min="-300" max="300" value="0" oninput="onElementSlider(this)"></div>
         <div class="slider-row"><div class="slider-label"><span>Haut / Bas</span><span class="val" id="val-left2-y">0px</span></div><input type="range" id="left2-y" min="-220" max="220" value="0" oninput="onElementSlider(this)"></div>
         <div class="slider-row"><div class="slider-label"><span>Rotation</span><span class="val" id="val-left2-rot">0°</span></div><input type="range" id="left2-rot" min="-180" max="180" value="0" oninput="onElementSlider(this)"></div>
       </div>
       <div class="product-control">
         <div class="product-control-title">Logo 3</div>
-        <div class="slider-row"><div class="slider-label"><span>Taille</span><span class="val" id="val-left3-size">100%</span></div><input type="range" id="left3-size" min="40" max="220" value="100" oninput="onElementSlider(this)"></div>
+        <div class="slider-row"><div class="slider-label"><span>Taille</span><span class="val" id="val-left3-size">100%</span></div><input type="range" id="left3-size" min="10" max="400" value="100" oninput="onElementSlider(this)"></div>
         <div class="slider-row"><div class="slider-label"><span>Gauche / Droite</span><span class="val" id="val-left3-x">0px</span></div><input type="range" id="left3-x" min="-300" max="300" value="0" oninput="onElementSlider(this)"></div>
         <div class="slider-row"><div class="slider-label"><span>Haut / Bas</span><span class="val" id="val-left3-y">0px</span></div><input type="range" id="left3-y" min="-220" max="220" value="0" oninput="onElementSlider(this)"></div>
         <div class="slider-row"><div class="slider-label"><span>Rotation</span><span class="val" id="val-left3-rot">0°</span></div><input type="range" id="left3-rot" min="-180" max="180" value="0" oninput="onElementSlider(this)"></div>
       </div>
       <div class="product-control">
         <div class="product-control-title">Logo 4</div>
-        <div class="slider-row"><div class="slider-label"><span>Taille</span><span class="val" id="val-left4-size">100%</span></div><input type="range" id="left4-size" min="40" max="220" value="100" oninput="onElementSlider(this)"></div>
+        <div class="slider-row"><div class="slider-label"><span>Taille</span><span class="val" id="val-left4-size">100%</span></div><input type="range" id="left4-size" min="10" max="400" value="100" oninput="onElementSlider(this)"></div>
         <div class="slider-row"><div class="slider-label"><span>Gauche / Droite</span><span class="val" id="val-left4-x">0px</span></div><input type="range" id="left4-x" min="-300" max="300" value="0" oninput="onElementSlider(this)"></div>
         <div class="slider-row"><div class="slider-label"><span>Haut / Bas</span><span class="val" id="val-left4-y">0px</span></div><input type="range" id="left4-y" min="-220" max="220" value="0" oninput="onElementSlider(this)"></div>
         <div class="slider-row"><div class="slider-label"><span>Rotation</span><span class="val" id="val-left4-rot">0°</span></div><input type="range" id="left4-rot" min="-180" max="180" value="0" oninput="onElementSlider(this)"></div>
       </div>
       <div class="product-control">
         <div class="product-control-title">Logo 5</div>
-        <div class="slider-row"><div class="slider-label"><span>Taille</span><span class="val" id="val-left5-size">100%</span></div><input type="range" id="left5-size" min="40" max="220" value="100" oninput="onElementSlider(this)"></div>
+        <div class="slider-row"><div class="slider-label"><span>Taille</span><span class="val" id="val-left5-size">100%</span></div><input type="range" id="left5-size" min="10" max="400" value="100" oninput="onElementSlider(this)"></div>
         <div class="slider-row"><div class="slider-label"><span>Gauche / Droite</span><span class="val" id="val-left5-x">0px</span></div><input type="range" id="left5-x" min="-300" max="300" value="0" oninput="onElementSlider(this)"></div>
         <div class="slider-row"><div class="slider-label"><span>Haut / Bas</span><span class="val" id="val-left5-y">0px</span></div><input type="range" id="left5-y" min="-220" max="220" value="0" oninput="onElementSlider(this)"></div>
         <div class="slider-row"><div class="slider-label"><span>Rotation</span><span class="val" id="val-left5-rot">0°</span></div><input type="range" id="left5-rot" min="-180" max="180" value="0" oninput="onElementSlider(this)"></div>
@@ -322,7 +332,7 @@ iframe{width:100%;border:0;display:block;transform-origin:top left}
         <div class="slider-row"><div class="slider-label"><span>Calque</span><span class="val" id="val-product5-z">25</span></div><input type="range" id="product5-z" min="1" max="50" value="25" oninput="onProductSlider(this)"></div>
       </div>
     </div>
-    <div class="hint">Option simple pour les calques : plus le chiffre est haut, plus le produit passe devant. Chaque image est envoyée séparément, donc chaque produit et chaque visuel gauche pourra être détouré.</div>
+    <div class="hint">Dans l’aperçu : cliquez un élément pour afficher ses poignées, utilisez Maj + clic pour en sélectionner plusieurs et le cadenas pour bloquer la sélection. Pour les calques, plus le chiffre est haut, plus le produit passe devant.</div>
   </div>
 
   <div class="card">
@@ -368,6 +378,7 @@ iframe{width:100%;border:0;display:block;transform-origin:top left}
   <div class="hd-status" id="videoStatus" role="status" aria-live="polite"></div>
   <a class="video-download" id="videoDownload" href="#">⬇ Télécharger la vidéo MP4</a>
 
+  <div class="editor-layout" id="editorLayout">
   <div class="preview-card" id="previewCard">
     <div class="tabs">
       <button class="tab active" onclick="switchGoodsTab('desktop',this)">Web</button>
@@ -381,12 +392,16 @@ iframe{width:100%;border:0;display:block;transform-origin:top left}
   <div class="card control-dock" id="controlDock">
     <div class="card-title"><span class="num">⚙</span> Réglages <span id="controlsFormatLabel">Goods Web</span></div>
     <div id="productControlsMount"></div>
+    <div class="text-toolbar" id="textToolbar">
+      <button type="button" class="add-text-btn" onclick="addGoodsText()">＋ Ajouter un texte</button>
+      <span>Ajoutez jusqu’à 8 textes, puis déplacez-les et modifiez-les directement dans l’aperçu.</span>
+    </div>
     <div class="product-control" id="storyTextControls" style="margin-top:18px;display:none">
       <div class="product-control-title">Texte Story / Instagram</div>
       <div class="field-row">
         <div class="slider-row">
           <div class="slider-label"><span>Taille du texte</span><span class="val" id="val-story-text-size">100%</span></div>
-          <input type="range" id="story-text-size" min="50" max="180" value="100" oninput="onElementSlider(this)">
+          <input type="range" id="story-text-size" min="20" max="400" value="100" oninput="onElementSlider(this)">
         </div>
         <div class="slider-row">
           <div class="slider-label"><span>Gauche / Droite</span><span class="val" id="val-story-text-x">0px</span></div>
@@ -412,7 +427,7 @@ iframe{width:100%;border:0;display:block;transform-origin:top left}
         </div>
         <div class="slider-row">
           <div class="slider-label"><span>Taille du texte</span><span class="val" id="val-video-text-size">100%</span></div>
-          <input type="range" id="video-text-size" min="50" max="180" value="100" oninput="onElementSlider(this)">
+          <input type="range" id="video-text-size" min="20" max="400" value="100" oninput="onElementSlider(this)">
         </div>
         <div class="slider-row">
           <div class="slider-label"><span>Gauche / Droite le texte</span><span class="val" id="val-video-text-x">0px</span></div>
@@ -445,6 +460,7 @@ iframe{width:100%;border:0;display:block;transform-origin:top left}
     </div>
     <button type="button" class="reset-format-btn" onclick="resetElementControls()">↻ Réinitialiser ce format</button>
   </div>
+  </div>
 
   <div class="links" id="linksBox"></div>
 </div>
@@ -459,6 +475,7 @@ const MAKE_WEBHOOK_URL = "https://hook.eu1.make.com/62irmz92j6x8l6a4d1v9mnpxfbtm
 const BASE_URL = 'https://magicstudioapp.github.io/magic-studio';
 const MAX_PRODUCTS = 20;
 const MAX_LOGOS = 5;
+const MAX_EXTRA_TEXTS = 8;
 const EDITOR_MARGIN = 140;
 const urls = {};
 let currentGoodsTab = 'desktop';
@@ -492,6 +509,9 @@ function extendProductFields() {
   }
 }
 extendProductFields();
+document.querySelectorAll('.logo-controls .product-control').forEach((control, index) => {
+  control.dataset.logoControl = String(index + 1);
+});
 
 for (let i = 1; i <= MAX_LOGOS; i++) {
   defaultFormatControls['left' + i + '_size'] = '100';
@@ -516,8 +536,14 @@ defaultFormatControls.story_text_x = '0';
 defaultFormatControls.story_text_y = '0';
 defaultFormatControls.story_text_rot = '0';
 const formatControls = {};
+const extraTexts = {};
+const primaryTextVisible = {};
+const lockedItems = {};
 Object.keys(goodsConfig).forEach(kind => {
   formatControls[kind] = {...defaultFormatControls};
+  extraTexts[kind] = [];
+  primaryTextVisible[kind] = true;
+  lockedItems[kind] = new Set();
 });
 
 function getParams(kind = currentGoodsTab) {
@@ -536,6 +562,8 @@ function getParams(kind = currentGoodsTab) {
     product_glow:document.getElementById('product_glow_enabled').checked ? document.getElementById('product_glow').value : 'transparent',
     series_text:document.getElementById('series_text').value,
     series_text_color:document.getElementById('series_text_color').value,
+    show_text:primaryTextVisible[kind] ? '1' : '0',
+    extra_texts:JSON.stringify(extraTexts[kind]),
     animation:kind === 'video' ? '0' : animationEnabled,
     animIntensity:document.getElementById('animation-intensity').value,
     animSpeed:document.getElementById('animation-speed').value,
@@ -595,7 +623,32 @@ function loadControlsForFormat(kind) {
   document.getElementById('controlsFormatLabel').textContent = goodsConfig[kind].label;
   document.getElementById('storyTextControls').style.display = kind === 'social' ? 'block' : 'none';
   document.getElementById('videoTextControls').style.display = kind === 'video' ? 'block' : 'none';
+  document.getElementById('textToolbar').classList.toggle('show', kind === 'social' || kind === 'video');
   document.getElementById('animationControls').style.display = kind === 'video' ? 'none' : 'block';
+}
+
+function addGoodsText() {
+  if (currentGoodsTab !== 'social' && currentGoodsTab !== 'video') return;
+  if (!primaryTextVisible[currentGoodsTab]) {
+    primaryTextVisible[currentGoodsTab] = true;
+    sendToIframe();
+    return;
+  }
+  if (extraTexts[currentGoodsTab].length >= MAX_EXTRA_TEXTS) {
+    alert('Vous pouvez ajouter jusqu’à ' + MAX_EXTRA_TEXTS + ' textes supplémentaires.');
+    return;
+  }
+  const index = extraTexts[currentGoodsTab].length;
+  extraTexts[currentGoodsTab].push({
+    id:'extra-' + Date.now().toString(36) + '-' + index,
+    text:'Nouveau texte',
+    size:100,
+    x:0,
+    y:(index - 1) * 150,
+    rot:0,
+    color:document.getElementById('series_text_color').value
+  });
+  sendToIframe();
 }
 
 function updateMovementRanges(kind) {
@@ -774,6 +827,9 @@ function setupControlsDock() {
 
 function resetElementControls() {
   formatControls[currentGoodsTab] = {...defaultFormatControls};
+  extraTexts[currentGoodsTab] = [];
+  primaryTextVisible[currentGoodsTab] = true;
+  lockedItems[currentGoodsTab].clear();
   loadControlsForFormat(currentGoodsTab);
   sendToIframe();
 }
@@ -787,11 +843,14 @@ function switchGoodsTab(kind, tabEl) {
   const cfg = goodsConfig[kind];
   const iframe = document.getElementById('goodsIframe');
   const previewWrap = document.querySelector('.preview-wrap');
+  const vertical = kind === 'social' || kind === 'video';
+  document.getElementById('editorLayout').classList.toggle('vertical', vertical);
+  document.body.classList.toggle('vertical-editor', vertical);
   const editorWidth = cfg.w + EDITOR_MARGIN * 2;
   const editorHeight = cfg.h + EDITOR_MARGIN * 2;
   const editorScale = Math.min(cfg.scale, 900 / editorWidth);
   previewWrap.style.height = (editorHeight * editorScale) + 'px';
-  previewWrap.style.borderRadius = (kind === 'social' || kind === 'video') ? '0' : '12px';
+  previewWrap.style.borderRadius = vertical ? '0' : '12px';
   iframe.style.transform = 'scale(' + editorScale + ')';
   iframe.style.width = editorWidth + 'px';
   iframe.style.height = editorHeight + 'px';
@@ -843,7 +902,7 @@ function applyGoodsDragPreview(el, type, index, x, y) {
   el.ownerDocument.__refreshGoodsSelection?.();
 }
 
-function deleteGoodsProduct(index) {
+function deleteGoodsProduct(index, refresh = true) {
   const countSelect = document.getElementById('figure_count');
   const count = Number(countSelect.value);
   for (let i = index; i < count; i++) {
@@ -875,87 +934,263 @@ function deleteGoodsProduct(index) {
     if (label) label.textContent = url ? 'Produit ' + i + ' chargé' : 'Produit ' + i;
   }
   updateFigureVisibility();
+  if (refresh) {
+    loadControlsForFormat(currentGoodsTab);
+    sendToIframe();
+  }
+}
+
+function deleteGoodsLogo(index, refresh = true) {
+  delete urls['left' + index + '_url'];
+  const zone = document.getElementById('zone-left' + index);
+  const preview = document.getElementById('prev-left' + index);
+  const label = zone?.querySelector('.upload-label');
+  zone?.classList.remove('has-file', 'error', 'uploading');
+  preview?.removeAttribute('src');
+  if (label) label.textContent = 'Image gauche ' + index;
+  if (refresh) sendToIframe();
+}
+
+function getExtraText(item) {
+  return extraTexts[currentGoodsTab].find(text => text.id === item.index);
+}
+
+function getGoodsItemPrefix(item) {
+  if (item.type === 'product') return 'product' + item.index;
+  if (item.type === 'left') return 'left' + item.index;
+  if (item.type === 'primary-text') return (currentGoodsTab === 'social' ? 'story' : 'video') + '_text';
+  return '';
+}
+
+function getGoodsItemValues(item) {
+  if (item.type === 'extra-text') {
+    const text = getExtraText(item) || {};
+    return {size:Number(text.size || 100), x:Number(text.x || 0), y:Number(text.y || 0), rot:Number(text.rot || 0)};
+  }
+  const prefix = getGoodsItemPrefix(item);
+  const fallbackSize = item.type === 'product' ? 118 : 100;
+  return {
+    size:Number(formatControls[currentGoodsTab][prefix + '_size'] || fallbackSize),
+    x:Number(formatControls[currentGoodsTab][prefix + '_x'] || 0),
+    y:Number(formatControls[currentGoodsTab][prefix + '_y'] || 0),
+    rot:Number(formatControls[currentGoodsTab][prefix + '_rot'] || 0)
+  };
+}
+
+function setGoodsItemValue(item, prop, value) {
+  value = Math.round(Number(value) || 0);
+  if (prop === 'size') value = Math.max(item.type.includes('text') ? 20 : 10, Math.min(400, value));
+  if (prop === 'rot') value = ((value + 180) % 360 + 360) % 360 - 180;
+  if (prop === 'x') value = Math.max(-goodsConfig[currentGoodsTab].w, Math.min(goodsConfig[currentGoodsTab].w, value));
+  if (prop === 'y') value = Math.max(-goodsConfig[currentGoodsTab].h, Math.min(goodsConfig[currentGoodsTab].h, value));
+  if (item.type === 'extra-text') {
+    const text = getExtraText(item);
+    if (text) text[prop] = value;
+    return value;
+  }
+  const prefix = getGoodsItemPrefix(item);
+  formatControls[currentGoodsTab][prefix + '_' + prop] = String(value);
+  const id = (prefix + '-' + prop).replace(/_/g, '-');
+  const control = document.getElementById(id);
+  if (control) control.value = String(value);
+  const label = document.getElementById('val-' + id);
+  if (label) label.textContent = value + (prop === 'size' ? '%' : (prop === 'rot' ? '°' : 'px'));
+  return value;
+}
+
+function applyGoodsItemPreview(item) {
+  const values = getGoodsItemValues(item);
+  if (item.type === 'left' || item.type === 'product') {
+    applyGoodsDragPreview(item.el, item.type, item.index, values.x, values.y);
+    return;
+  }
+  if (item.type === 'primary-text') {
+    item.el.style.fontSize = (82 * values.size / 100) + 'px';
+    item.el.style.bottom = ((currentGoodsTab === 'social' ? 110 : 300) - values.y) + 'px';
+    if (currentGoodsTab === 'video') {
+      item.el.style.setProperty('--text-x', values.x + 'px');
+      item.el.style.setProperty('--text-rot', values.rot + 'deg');
+    } else {
+      item.el.style.transform = 'translateX(' + values.x + 'px) rotate(' + values.rot + 'deg)';
+    }
+    return;
+  }
+  item.el.style.transform = 'translate(-50%,-50%) translate(' + values.x + 'px,' + values.y + 'px) scale(' + (values.size / 100) + ') rotate(' + values.rot + 'deg)';
+}
+
+function deleteGoodsItems(items) {
+  const unlocked = items.filter(item => !lockedItems[currentGoodsTab].has(item.key));
+  const products = unlocked.filter(item => item.type === 'product').map(item => Number(item.index)).sort((a, b) => b - a);
+  unlocked.filter(item => item.type === 'left').forEach(item => deleteGoodsLogo(item.index, false));
+  unlocked.filter(item => item.type === 'extra-text').forEach(item => {
+    extraTexts[currentGoodsTab] = extraTexts[currentGoodsTab].filter(text => text.id !== item.index);
+  });
+  if (unlocked.some(item => item.type === 'primary-text')) primaryTextVisible[currentGoodsTab] = false;
+  products.forEach(index => deleteGoodsProduct(index, false));
+  if (products.length) lockedItems[currentGoodsTab].clear();
   loadControlsForFormat(currentGoodsTab);
   sendToIframe();
 }
 
-function installProductEditor(doc) {
+function installGoodsEditor(doc) {
   const cfg = goodsConfig[currentGoodsTab];
   const style = doc.createElement('style');
   style.textContent = `
     html,body{width:${cfg.w + EDITOR_MARGIN * 2}px!important;height:${cfg.h + EDITOR_MARGIN * 2}px!important;overflow:visible!important;background:transparent!important}
     .banner{transform:translate(${EDITOR_MARGIN}px,${EDITOR_MARGIN}px);transform-origin:top left}
+    [data-goods-editor-key]{touch-action:none}
+    .goods-item-selected{outline:3px solid #fbbf24!important;outline-offset:6px}
+    .goods-item-locked{cursor:not-allowed!important}
     .goods-selection{position:absolute;border:3px dashed #a855f7;box-shadow:0 0 0 1px rgba(255,255,255,.8);z-index:9999;pointer-events:none}
-    .goods-handle{position:absolute;width:44px;height:44px;border:3px solid white;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#7c3aed;color:white;font:700 24px Arial;box-shadow:0 4px 14px rgba(0,0,0,.55);pointer-events:auto;touch-action:none;cursor:pointer}
+    .goods-selection.locked{border-color:#fbbf24}
+    .goods-handle{position:absolute;width:44px;height:44px;border:3px solid white;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#7c3aed;color:white;font:700 22px Arial;box-shadow:0 4px 14px rgba(0,0,0,.55);pointer-events:auto;touch-action:none;cursor:pointer}
     .goods-delete{right:-24px;top:-24px;background:#ef4444}
     .goods-rotate{left:-24px;top:-24px;cursor:grab}
+    .goods-lock{left:-24px;bottom:-24px;background:#d97706;font-size:19px}
     .goods-resize{right:-24px;bottom:-24px;cursor:nwse-resize}
   `;
   doc.head.appendChild(style);
-  let selected = null;
+  const selected = new Map();
   const box = doc.createElement('div');
   box.className = 'goods-selection';
   box.style.display = 'none';
-  box.innerHTML = '<button class="goods-handle goods-rotate" title="Tourner">↻</button><button class="goods-handle goods-delete" title="Supprimer">×</button><button class="goods-handle goods-resize" title="Agrandir ou réduire">↘</button>';
+  box.innerHTML = '<button class="goods-handle goods-rotate" title="Tourner">↻</button><button class="goods-handle goods-delete" title="Supprimer">×</button><button class="goods-handle goods-lock" title="Verrouiller ou déverrouiller">🔓</button><button class="goods-handle goods-resize" title="Agrandir ou réduire">↘</button>';
   doc.body.appendChild(box);
-  const refresh = () => {
-    if (!selected || !selected.el.isConnected) return;
-    const rect = selected.el.getBoundingClientRect();
-    box.style.left = rect.left + 'px';
-    box.style.top = rect.top + 'px';
-    box.style.width = rect.width + 'px';
-    box.style.height = rect.height + 'px';
+
+  const refreshControls = () => {
+    const productIds = new Set([...selected.values()].filter(item => item.type === 'product').map(item => String(item.index)));
+    const logoIds = new Set([...selected.values()].filter(item => item.type === 'left').map(item => String(item.index)));
+    document.querySelectorAll('[data-product-control]').forEach(control => control.classList.toggle('selected-product-control', productIds.has(control.dataset.productControl)));
+    document.querySelectorAll('[data-logo-control]').forEach(control => control.classList.toggle('selected-product-control', logoIds.has(control.dataset.logoControl)));
   };
-  doc.__refreshGoodsSelection = refresh;
-  doc.__selectGoodsProduct = (el, index) => {
-    selected = {el, index};
-    box.style.display = 'block';
-    document.querySelectorAll('[data-product-control]').forEach(control => {
-      control.classList.toggle('selected-product-control', control.dataset.productControl === String(index));
+  const refresh = () => {
+    [...selected].forEach(([key, item]) => {
+      if (!item.el.isConnected) selected.delete(key);
     });
+    doc.querySelectorAll('.goods-item-selected').forEach(el => el.classList.remove('goods-item-selected'));
+    if (!selected.size) {
+      box.style.display = 'none';
+      refreshControls();
+      return;
+    }
+    const items = [...selected.values()];
+    items.forEach(item => {
+      item.el.classList.add('goods-item-selected');
+      item.el.classList.toggle('goods-item-locked', lockedItems[currentGoodsTab].has(item.key));
+    });
+    const rects = items.map(item => item.el.getBoundingClientRect());
+    const left = Math.min(...rects.map(rect => rect.left));
+    const top = Math.min(...rects.map(rect => rect.top));
+    const right = Math.max(...rects.map(rect => rect.right));
+    const bottom = Math.max(...rects.map(rect => rect.bottom));
+    box.style.display = 'block';
+    box.style.left = left + 'px';
+    box.style.top = top + 'px';
+    box.style.width = (right - left) + 'px';
+    box.style.height = (bottom - top) + 'px';
+    const allLocked = items.every(item => lockedItems[currentGoodsTab].has(item.key));
+    box.classList.toggle('locked', allLocked);
+    box.querySelector('.goods-lock').textContent = allLocked ? '🔒' : '🔓';
+    refreshControls();
+  };
+  const select = (item, additive) => {
+    if (additive) {
+      if (selected.has(item.key)) selected.delete(item.key);
+      else selected.set(item.key, item);
+    } else if (!selected.has(item.key)) {
+      selected.clear();
+      selected.set(item.key, item);
+    }
     refresh();
   };
+  const bind = (el, type, index, onInput) => {
+    if (!el || el.classList.contains('missing')) return;
+    const item = {el, type, index, key:type + ':' + index};
+    el.dataset.goodsEditorKey = item.key;
+    el.draggable = false;
+    el.title = type.includes('text') ? 'Cliquez pour modifier, glissez pour déplacer' : 'Glissez pour déplacer — Maj + clic pour sélectionner plusieurs éléments';
+    el.style.cursor = 'grab';
+    if (onInput) el.addEventListener('input', () => onInput(el.innerText.replace(/\r/g, '')));
+    let drag = null;
+    let lastPointerSelection = -Infinity;
+    el.addEventListener('pointerdown', event => {
+      if (!type.includes('text')) event.preventDefault();
+      event.stopPropagation();
+      lastPointerSelection = performance.now();
+      select(item, event.shiftKey);
+      if (lockedItems[currentGoodsTab].has(item.key) || !selected.has(item.key)) return;
+      drag = {
+        x:event.clientX,
+        y:event.clientY,
+        values:[...selected.values()].filter(entry => !lockedItems[currentGoodsTab].has(entry.key)).map(entry => ({item:entry, start:getGoodsItemValues(entry)}))
+      };
+      el.style.cursor = 'grabbing';
+      el.setPointerCapture(event.pointerId);
+    });
+    el.addEventListener('pointermove', event => {
+      if (!drag || !el.hasPointerCapture(event.pointerId)) return;
+      const dx = event.clientX - drag.x;
+      const dy = event.clientY - drag.y;
+      if (Math.abs(dx) + Math.abs(dy) < 2) return;
+      drag.values.forEach(entry => {
+        setGoodsItemValue(entry.item, 'x', entry.start.x + dx);
+        setGoodsItemValue(entry.item, 'y', entry.start.y + dy);
+        applyGoodsItemPreview(entry.item);
+      });
+      refresh();
+    });
+    const finish = event => {
+      if (el.hasPointerCapture(event.pointerId)) el.releasePointerCapture(event.pointerId);
+      el.style.cursor = lockedItems[currentGoodsTab].has(item.key) ? 'not-allowed' : 'grab';
+      drag = null;
+    };
+    el.addEventListener('pointerup', finish);
+    el.addEventListener('pointercancel', finish);
+    el.addEventListener('click', event => {
+      event.stopPropagation();
+      if (performance.now() - lastPointerSelection > 500) select(item, event.shiftKey);
+    });
+  };
+  doc.__refreshGoodsSelection = refresh;
+  doc.__goodsEditor = {bind, selected, refresh};
+
   box.querySelector('.goods-delete').addEventListener('click', event => {
     event.preventDefault();
     event.stopPropagation();
-    if (selected) deleteGoodsProduct(selected.index);
+    deleteGoodsItems([...selected.values()]);
+  });
+  box.querySelector('.goods-lock').addEventListener('click', event => {
+    event.preventDefault();
+    event.stopPropagation();
+    const items = [...selected.values()];
+    const unlock = items.every(item => lockedItems[currentGoodsTab].has(item.key));
+    items.forEach(item => unlock ? lockedItems[currentGoodsTab].delete(item.key) : lockedItems[currentGoodsTab].add(item.key));
+    refresh();
   });
   const startHandleDrag = (handle, mode) => {
     handle.addEventListener('pointerdown', event => {
-      if (!selected) return;
       event.preventDefault();
       event.stopPropagation();
-      const index = selected.index;
-      const center = selected.el.getBoundingClientRect();
-      const centerX = center.left + center.width / 2;
-      const centerY = center.top + center.height / 2;
-      const startX = event.clientX;
-      const startY = event.clientY;
-      const startSize = Number(formatControls[currentGoodsTab]['product' + index + '_size'] || 118);
-      const startRot = Number(formatControls[currentGoodsTab]['product' + index + '_rot'] || 0);
-      const startAngle = Math.atan2(startY - centerY, startX - centerX) * 180 / Math.PI;
+      const items = [...selected.values()].filter(item => !lockedItems[currentGoodsTab].has(item.key));
+      if (!items.length) return;
+      const boxRect = box.getBoundingClientRect();
+      const centerX = boxRect.left + boxRect.width / 2;
+      const centerY = boxRect.top + boxRect.height / 2;
+      const startAngle = Math.atan2(event.clientY - centerY, event.clientX - centerX) * 180 / Math.PI;
+      const startDistance = Math.max(20, Math.hypot(event.clientX - centerX, event.clientY - centerY));
+      const starts = items.map(item => ({item, values:getGoodsItemValues(item)}));
       handle.setPointerCapture(event.pointerId);
       const move = moveEvent => {
         if (!handle.hasPointerCapture(moveEvent.pointerId)) return;
         if (mode === 'resize') {
-          const delta = ((moveEvent.clientX - startX) + (moveEvent.clientY - startY)) * .32;
-          const value = Math.max(10, Math.min(400, Math.round(startSize + delta)));
-          const control = document.getElementById('product' + index + '-size');
-          control.value = value;
-          document.getElementById('val-product' + index + '-size').textContent = value + '%';
-          formatControls[currentGoodsTab]['product' + index + '_size'] = String(value);
+          const distance = Math.max(5, Math.hypot(moveEvent.clientX - centerX, moveEvent.clientY - centerY));
+          const ratio = distance / startDistance;
+          starts.forEach(entry => setGoodsItemValue(entry.item, 'size', entry.values.size * ratio));
         } else {
           const angle = Math.atan2(moveEvent.clientY - centerY, moveEvent.clientX - centerX) * 180 / Math.PI;
-          let value = Math.round(startRot + angle - startAngle);
-          value = ((value + 180) % 360 + 360) % 360 - 180;
-          const control = document.getElementById('product' + index + '-rot');
-          control.value = value;
-          document.getElementById('val-product' + index + '-rot').textContent = value + '°';
-          formatControls[currentGoodsTab]['product' + index + '_rot'] = String(value);
+          starts.forEach(entry => setGoodsItemValue(entry.item, 'rot', entry.values.rot + angle - startAngle));
         }
-        const x = Number(formatControls[currentGoodsTab]['product' + index + '_x'] || 0);
-        const y = Number(formatControls[currentGoodsTab]['product' + index + '_y'] || 0);
-        applyGoodsDragPreview(selected.el, 'product', index, x, y);
+        starts.forEach(entry => applyGoodsItemPreview(entry.item));
         refresh();
       };
       const finish = finishEvent => {
@@ -971,93 +1206,41 @@ function installProductEditor(doc) {
   };
   startHandleDrag(box.querySelector('.goods-resize'), 'resize');
   startHandleDrag(box.querySelector('.goods-rotate'), 'rotate');
+  doc.addEventListener('pointerdown', event => {
+    if (event.target.closest('[data-goods-editor-key],.goods-selection')) return;
+    selected.clear();
+    refresh();
+  });
 }
 
 function bindGoodsDraggable(el, type, index) {
-  if (!el || el.classList.contains('missing')) return;
-  const prefix = type === 'left' ? 'left' + index : 'product' + index;
-  el.draggable = false;
-  el.title = 'Glissez pour déplacer';
-  el.style.cursor = 'grab';
-  el.style.touchAction = 'none';
-  let startX = 0, startY = 0, baseX = 0, baseY = 0;
-  el.addEventListener('pointerdown', event => {
-    event.preventDefault();
-    if (type === 'product') el.ownerDocument.__selectGoodsProduct?.(el, index);
-    startX = event.clientX;
-    startY = event.clientY;
-    baseX = Number(formatControls[currentGoodsTab][prefix + '_x'] || 0);
-    baseY = Number(formatControls[currentGoodsTab][prefix + '_y'] || 0);
-    el.style.cursor = 'grabbing';
-    el.setPointerCapture(event.pointerId);
-  });
-  el.addEventListener('pointermove', event => {
-    if (!el.hasPointerCapture(event.pointerId)) return;
-    const x = setGoodsDragControl(prefix.replace(/_/g, '-') + '-x', baseX + event.clientX - startX);
-    const y = setGoodsDragControl(prefix.replace(/_/g, '-') + '-y', baseY + event.clientY - startY);
-    if (x === undefined || y === undefined) return;
-    formatControls[currentGoodsTab][prefix + '_x'] = String(x);
-    formatControls[currentGoodsTab][prefix + '_y'] = String(y);
-    applyGoodsDragPreview(el, type, index, x, y);
-    el.ownerDocument.__refreshGoodsSelection?.();
-  });
-  const finish = event => {
-    if (el.hasPointerCapture(event.pointerId)) el.releasePointerCapture(event.pointerId);
-    el.style.cursor = 'grab';
-  };
-  el.addEventListener('pointerup', finish);
-  el.addEventListener('pointercancel', finish);
+  el?.ownerDocument.__goodsEditor?.bind(el, type, index);
 }
 
 function wirePreviewInteraction() {
   const iframe = document.getElementById('goodsIframe');
   const doc = iframe.contentDocument;
-  if (!doc) return;
-  if (doc.__goodsInteractionWired) return;
+  if (!doc || doc.__goodsInteractionWired) return;
   doc.__goodsInteractionWired = true;
-  installProductEditor(doc);
+  installGoodsEditor(doc);
   for (let i = 1; i <= MAX_LOGOS; i++) bindGoodsDraggable(doc.querySelector('.left' + i), 'left', i);
   for (let i = 1; i <= MAX_PRODUCTS; i++) bindGoodsDraggable(doc.querySelector('.fig' + i), 'product', i);
   if (currentGoodsTab !== 'social' && currentGoodsTab !== 'video') return;
-  const prefix = currentGoodsTab === 'social' ? 'story' : 'video';
   const textEl = doc.getElementById(currentGoodsTab === 'social' ? 'storyText' : 'videoText');
-  if (!textEl) return;
-  textEl.contentEditable = 'true';
-  textEl.spellcheck = false;
-  textEl.title = 'Cliquez pour modifier, glissez pour déplacer';
-  textEl.style.cursor = 'move';
-  textEl.style.outline = '2px dashed rgba(255,255,255,.48)';
-  textEl.style.outlineOffset = '8px';
-  textEl.addEventListener('input', () => {
-    document.getElementById('series_text').value = textEl.innerText.replace(/\r/g, '');
-  });
-  let startX = 0, startY = 0, baseX = 0, baseY = 0, moved = false;
-  textEl.addEventListener('pointerdown', event => {
-    startX = event.clientX;
-    startY = event.clientY;
-    baseX = Number(formatControls[currentGoodsTab][prefix + '_text_x'] || 0);
-    baseY = Number(formatControls[currentGoodsTab][prefix + '_text_y'] || 0);
-    moved = false;
-    textEl.setPointerCapture(event.pointerId);
-  });
-  textEl.addEventListener('pointermove', event => {
-    if (!textEl.hasPointerCapture(event.pointerId)) return;
-    const dx = event.clientX - startX;
-    const dy = event.clientY - startY;
-    if (Math.abs(dx) + Math.abs(dy) < 4) return;
-    moved = true;
-    const x = setGoodsDragControl(prefix + '-text-x', baseX + dx);
-    const y = setGoodsDragControl(prefix + '-text-y', baseY + dy);
-    if (x === undefined || y === undefined) return;
-    formatControls[currentGoodsTab][prefix + '_text_x'] = String(x);
-    formatControls[currentGoodsTab][prefix + '_text_y'] = String(y);
-    const rot = Number(formatControls[currentGoodsTab][prefix + '_text_rot'] || 0);
-    textEl.style.transform = 'translateX(' + x + 'px) rotate(' + rot + 'deg)';
-    textEl.style.bottom = ((prefix === 'story' ? 110 : 300) - y) + 'px';
-  });
-  textEl.addEventListener('pointerup', event => {
-    if (textEl.hasPointerCapture(event.pointerId)) textEl.releasePointerCapture(event.pointerId);
-    if (moved) sendToIframe();
+  if (textEl) {
+    textEl.contentEditable = 'true';
+    textEl.spellcheck = false;
+    doc.__goodsEditor.bind(textEl, 'primary-text', 'primary', value => {
+      document.getElementById('series_text').value = value;
+    });
+  }
+  doc.querySelectorAll('.extra-text[data-text-id]').forEach(el => {
+    el.contentEditable = 'true';
+    el.spellcheck = false;
+    doc.__goodsEditor.bind(el, 'extra-text', el.dataset.textId, value => {
+      const text = extraTexts[currentGoodsTab].find(entry => entry.id === el.dataset.textId);
+      if (text) text.text = value;
+    });
   });
 }
 

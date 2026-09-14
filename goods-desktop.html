@@ -24,12 +24,10 @@ body{position:relative;font-family:Arial,sans-serif}
 .count-3 .fig1{left:90px;top:-14px;width:450px;height:455px}.count-3 .fig2{left:335px;top:-62px;width:540px;height:520px}.count-3 .fig3{left:650px;top:-18px;width:455px;height:465px}
 .count-4 .fig1{left:40px;top:-2px;width:365px;height:420px}.count-4 .fig2{left:250px;top:-42px;width:435px;height:465px}.count-4 .fig3{left:510px;top:-48px;width:455px;height:470px}.count-4 .fig4{left:755px;top:-2px;width:365px;height:420px}
 .count-5 .fig1{left:35px;top:12px;width:330px;height:405px}.count-5 .fig2{left:205px;top:-24px;width:395px;height:450px}.count-5 .fig3{left:405px;top:-62px;width:470px;height:495px}.count-5 .fig4{left:655px;top:-22px;width:395px;height:450px}.count-5 .fig5{left:850px;top:12px;width:330px;height:405px}
-.motion-enabled .bg{animation:goodsBgDrift calc(8s * var(--motion-speed-factor,1)) ease-in-out infinite alternate;transform-origin:center}
 .motion-enabled .left-stack,.motion-enabled .figures{animation:goodsFloat calc(var(--motion-duration,4.8s) * var(--motion-speed-factor,1)) ease-in-out infinite;will-change:translate}
 .motion-enabled .left-stack{--motion-x:calc(-5px * var(--motion-mult,.45));--motion-y:calc(6px * var(--motion-mult,.45));--motion-duration:5.3s}
 .motion-enabled .figures{--motion-x:calc(5px * var(--motion-mult,.45));--motion-y:calc(-8px * var(--motion-mult,.45));--motion-duration:4.9s}
 @keyframes goodsFloat{0%,100%{translate:0 0}50%{translate:var(--motion-x,0) var(--motion-y,-6px)}}
-@keyframes goodsBgDrift{0%{transform:scale(1)}100%{transform:scale(1.035)}}
 @media (prefers-reduced-motion:reduce){.motion-enabled *{animation:none!important}}
 .missing{display:none}
 </style>

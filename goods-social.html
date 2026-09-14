@@ -27,13 +27,12 @@ body{position:relative;font-family:Arial,sans-serif}
 .count-4 .fig1{left:-60px;top:320px;width:360px;height:780px}.count-4 .fig2{left:160px;top:135px;width:500px;height:960px}.count-4 .fig3{left:500px;top:118px;width:510px;height:980px}.count-4 .fig4{left:740px;top:320px;width:360px;height:780px}
 .count-5 .fig1{left:-65px;top:400px;width:310px;height:710px}.count-5 .fig2{left:90px;top:255px;width:420px;height:840px}.count-5 .fig3{left:320px;top:110px;width:550px;height:1010px}.count-5 .fig4{left:610px;top:255px;width:420px;height:840px}.count-5 .fig5{left:805px;top:400px;width:310px;height:710px}
 .story-text{position:absolute;left:60px;right:60px;bottom:110px;z-index:60;color:#fff;font-family:'Bebas Neue','Arial Black',Impact,sans-serif;font-size:82px;font-weight:400;line-height:1;text-align:center;text-transform:uppercase;letter-spacing:1px;text-shadow:0 6px 0 rgba(0,0,0,.62),0 14px 22px rgba(0,0,0,.45);white-space:pre-wrap;transform-origin:center}
-.motion-enabled .bg{animation:goodsBgDrift calc(8s * var(--motion-speed-factor,1)) ease-in-out infinite alternate;transform-origin:center}
-.motion-enabled .left-stack,.motion-enabled .figures,.motion-enabled .story-text{animation:goodsFloat calc(var(--motion-duration,4.8s) * var(--motion-speed-factor,1)) ease-in-out infinite;will-change:translate}
+.extra-text{position:absolute;left:50%;top:50%;z-index:65;max-width:900px;width:max-content;color:#fff;font-family:'Bebas Neue','Arial Black',Impact,sans-serif;font-size:82px;line-height:1;text-align:center;text-transform:uppercase;letter-spacing:1px;text-shadow:0 6px 0 rgba(0,0,0,.62),0 14px 22px rgba(0,0,0,.45);white-space:pre-wrap;transform-origin:center}
+.motion-enabled .left-stack,.motion-enabled .figures,.motion-enabled .story-text,.motion-enabled .extra-text{animation:goodsFloat calc(var(--motion-duration,4.8s) * var(--motion-speed-factor,1)) ease-in-out infinite;will-change:translate}
 .motion-enabled .left-stack{--motion-x:calc(-5px * var(--motion-mult,.45));--motion-y:calc(6px * var(--motion-mult,.45));--motion-duration:5.3s}
 .motion-enabled .figures{--motion-x:calc(5px * var(--motion-mult,.45));--motion-y:calc(-8px * var(--motion-mult,.45));--motion-duration:4.9s}
 .motion-enabled .story-text{--motion-x:calc(-2px * var(--motion-mult,.45));--motion-y:calc(5px * var(--motion-mult,.45));--motion-duration:5.5s}
 @keyframes goodsFloat{0%,100%{translate:0 0}50%{translate:var(--motion-x,0) var(--motion-y,-6px)}}
-@keyframes goodsBgDrift{0%{transform:scale(1)}100%{transform:scale(1.035)}}
 @media (prefers-reduced-motion:reduce){.motion-enabled *{animation:none!important}}
 .missing{display:none}
 </style>
@@ -56,6 +55,7 @@ body{position:relative;font-family:Arial,sans-serif}
     <img class="fig fig4" data-src="figure4_url">
     <img class="fig fig5" data-src="figure5_url">
   </div>
+  <div id="extraTextLayer"></div>
   <div class="story-text" id="storyText"></div>
 </div>
 <script>
@@ -84,11 +84,34 @@ document.querySelectorAll('img[data-src]').forEach(img => {
   img.src = url;
 });
 document.documentElement.style.setProperty('--product-glow', g('product_glow') || '#ffffff');
-document.getElementById('storyText').textContent = g('series_text') || 'Série maintenant disponible !';
-document.getElementById('storyText').style.color = g('series_text_color') || '#ffffff';
-document.getElementById('storyText').style.fontSize = (82 * Math.max(50, Math.min(180, Number(g('story_text_size') || 100))) / 100) + 'px';
-document.getElementById('storyText').style.bottom = (110 - Number(g('story_text_y') || 0)) + 'px';
-document.getElementById('storyText').style.transform = 'translateX(' + Number(g('story_text_x') || 0) + 'px) rotate(' + Number(g('story_text_rot') || 0) + 'deg)';
+const storyText = document.getElementById('storyText');
+storyText.textContent = p.has('series_text') ? p.get('series_text') : 'Série maintenant disponible !';
+storyText.style.color = g('series_text_color') || '#ffffff';
+storyText.style.fontSize = (82 * Math.max(20, Math.min(400, Number(g('story_text_size') || 100))) / 100) + 'px';
+storyText.style.bottom = (110 - Number(g('story_text_y') || 0)) + 'px';
+storyText.style.transform = 'translateX(' + Number(g('story_text_x') || 0) + 'px) rotate(' + Number(g('story_text_rot') || 0) + 'deg)';
+if (g('show_text') === '0') storyText.classList.add('missing');
+function renderExtraTexts() {
+  let texts = [];
+  try { texts = JSON.parse(g('extra_texts') || '[]'); } catch (_) {}
+  if (!Array.isArray(texts)) return;
+  const layer = document.getElementById('extraTextLayer');
+  texts.slice(0, 8).forEach((text, index) => {
+    if (!text || typeof text.text !== 'string') return;
+    const el = document.createElement('div');
+    el.className = 'extra-text';
+    el.dataset.textId = String(text.id || ('extra-' + index));
+    el.textContent = text.text.slice(0, 200);
+    const size = Math.max(20, Math.min(400, Number(text.size) || 100));
+    const x = Math.max(-1080, Math.min(1080, Number(text.x) || 0));
+    const y = Math.max(-1920, Math.min(1920, Number(text.y) || 0));
+    const rot = Math.max(-180, Math.min(180, Number(text.rot) || 0));
+    el.style.color = /^#[0-9a-f]{6}$/i.test(text.color || '') ? text.color : '#ffffff';
+    el.style.transform = 'translate(-50%,-50%) translate(' + x + 'px,' + y + 'px) scale(' + (size / 100) + ') rotate(' + rot + 'deg)';
+    layer.appendChild(el);
+  });
+}
+renderExtraTexts();
 function configureMotion() {
   if (g('animation') !== '1') return;
   const intensity = Math.max(0, Math.min(100, Number(g('animIntensity') || 45))) / 100;

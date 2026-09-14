@@ -24,6 +24,7 @@ body{position:relative;font-family:Arial,sans-serif}
 .count-4 .fig1{left:-60px;top:300px;width:360px;height:720px}.count-4 .fig2{left:160px;top:115px;width:500px;height:890px}.count-4 .fig3{left:500px;top:98px;width:510px;height:900px}.count-4 .fig4{left:740px;top:300px;width:360px;height:720px}
 .count-5 .fig1{left:-65px;top:370px;width:310px;height:660px}.count-5 .fig2{left:90px;top:230px;width:420px;height:780px}.count-5 .fig3{left:320px;top:90px;width:550px;height:940px}.count-5 .fig4{left:610px;top:230px;width:420px;height:780px}.count-5 .fig5{left:805px;top:370px;width:310px;height:660px}
 .video-text{position:absolute;left:70px;right:70px;bottom:300px;z-index:60;color:#fff;font-family:'Arial Black',Impact,sans-serif;font-size:82px;line-height:1;text-align:center;text-transform:uppercase;letter-spacing:1px;text-shadow:0 6px 0 rgba(0,0,0,.62),0 14px 22px rgba(0,0,0,.45);opacity:0;animation:textIntro .75s ease-out .15s both;white-space:pre-wrap;transform-origin:center}
+.extra-text{position:absolute;left:50%;top:50%;z-index:65;max-width:900px;width:max-content;color:#fff;font-family:'Arial Black',Impact,sans-serif;font-size:82px;line-height:1;text-align:center;text-transform:uppercase;letter-spacing:1px;text-shadow:0 6px 0 rgba(0,0,0,.62),0 14px 22px rgba(0,0,0,.45);white-space:pre-wrap;transform-origin:center}
 .motion-enabled .left-stack,.motion-enabled .figures{animation-name:goodsFloat;animation-duration:calc(var(--motion-duration,4.8s) * var(--motion-speed-factor,1));animation-timing-function:ease-in-out;animation-iteration-count:infinite;will-change:translate}
 .motion-enabled .left-stack{--motion-x:calc(-5px * var(--motion-mult,.45));--motion-y:calc(6px * var(--motion-mult,.45));--motion-duration:5.3s}
 .motion-enabled .figures{--motion-x:calc(5px * var(--motion-mult,.45));--motion-y:calc(-8px * var(--motion-mult,.45));--motion-duration:4.9s}
@@ -73,6 +74,7 @@ body{position:relative;font-family:Arial,sans-serif}
     <img class="fig fig4" data-src="figure4_url">
     <img class="fig fig5" data-src="figure5_url">
   </div>
+  <div id="extraTextLayer"></div>
   <div class="video-text" id="videoText"></div>
 </div>
 <script>
@@ -90,12 +92,35 @@ document.documentElement.style.setProperty('--video-duration', videoDuration + '
 const bgUrl = g('bg_url');
 if (bgUrl) document.querySelector('.bg').style.backgroundImage = "url('" + bgUrl + "')";
 else document.querySelector('.bg').style.backgroundImage = 'linear-gradient(135deg,' + (g('fallback_bg') || '#06233a') + ',' + (g('fallback_bg2') || '#2f80c9') + ')';
-document.getElementById('videoText').textContent = g('series_text') || 'Série maintenant disponible !';
-document.getElementById('videoText').style.color = g('series_text_color') || '#ffffff';
-document.getElementById('videoText').style.fontSize = (82 * Math.max(50, Math.min(180, Number(g('video_text_size') || 100))) / 100) + 'px';
-document.getElementById('videoText').style.bottom = (300 - Number(g('video_text_y') || 0)) + 'px';
-document.getElementById('videoText').style.setProperty('--text-x', Number(g('video_text_x') || 0) + 'px');
-document.getElementById('videoText').style.setProperty('--text-rot', Number(g('video_text_rot') || 0) + 'deg');
+const videoText = document.getElementById('videoText');
+videoText.textContent = p.has('series_text') ? p.get('series_text') : 'Série maintenant disponible !';
+videoText.style.color = g('series_text_color') || '#ffffff';
+videoText.style.fontSize = (82 * Math.max(20, Math.min(400, Number(g('video_text_size') || 100))) / 100) + 'px';
+videoText.style.bottom = (300 - Number(g('video_text_y') || 0)) + 'px';
+videoText.style.setProperty('--text-x', Number(g('video_text_x') || 0) + 'px');
+videoText.style.setProperty('--text-rot', Number(g('video_text_rot') || 0) + 'deg');
+if (g('show_text') === '0') videoText.classList.add('missing');
+function renderExtraTexts() {
+  let texts = [];
+  try { texts = JSON.parse(g('extra_texts') || '[]'); } catch (_) {}
+  if (!Array.isArray(texts)) return;
+  const layer = document.getElementById('extraTextLayer');
+  texts.slice(0, 8).forEach((text, index) => {
+    if (!text || typeof text.text !== 'string') return;
+    const el = document.createElement('div');
+    el.className = 'extra-text';
+    el.dataset.textId = String(text.id || ('extra-' + index));
+    el.textContent = text.text.slice(0, 200);
+    const size = Math.max(20, Math.min(400, Number(text.size) || 100));
+    const x = Math.max(-1080, Math.min(1080, Number(text.x) || 0));
+    const y = Math.max(-1920, Math.min(1920, Number(text.y) || 0));
+    const rot = Math.max(-180, Math.min(180, Number(text.rot) || 0));
+    el.style.color = /^#[0-9a-f]{6}$/i.test(text.color || '') ? text.color : '#ffffff';
+    el.style.transform = 'translate(-50%,-50%) translate(' + x + 'px,' + y + 'px) scale(' + (size / 100) + ') rotate(' + rot + 'deg)';
+    layer.appendChild(el);
+  });
+}
+renderExtraTexts();
 function configureMotion() {
   return;
 }

@@ -41,7 +41,6 @@ body{width:700px;height:420px;overflow:hidden;background:transparent;position:re
 .b-back-r img{width:100%;height:100%;object-fit:contain;transform:perspective(300px) rotateY(-16deg) scaleX(0.9);}
 .disp{position:absolute;left:50%;top:-42px;transform:translateX(-50%) rotate(1deg);width:430px;height:660px;z-index:15;}
 .disp img{width:100%;height:100%;object-fit:contain;}
-.motion-enabled .bg{animation:bannerBgDrift calc(8s * var(--motion-speed-factor,1)) ease-in-out infinite alternate;transform-origin:center;}
 .motion-enabled .logo-wrap,.motion-enabled .text-zone,.motion-enabled .dispo-outer,.motion-enabled .b-back-l,.motion-enabled .b-back-r,.motion-enabled .disp{animation:bannerFloat calc(var(--motion-duration,4s) * var(--motion-speed-factor,1)) ease-in-out infinite;will-change:translate;}
 .motion-enabled .logo-wrap{--motion-x:calc(2px * var(--motion-mult,.45));--motion-y:calc(-6px * var(--motion-mult,.45));--motion-duration:4.8s;}
 .motion-enabled .text-zone{--motion-x:calc(-2px * var(--motion-mult,.45));--motion-y:calc(5px * var(--motion-mult,.45));--motion-duration:5.5s;}
@@ -50,7 +49,6 @@ body{width:700px;height:420px;overflow:hidden;background:transparent;position:re
 .motion-enabled .b-back-r{--motion-x:calc(5px * var(--motion-mult,.45));--motion-y:calc(-7px * var(--motion-mult,.45));--motion-duration:5.8s;}
 .motion-enabled .disp{--motion-x:calc(0px * var(--motion-mult,.45));--motion-y:calc(-9px * var(--motion-mult,.45));--motion-duration:4.9s;}
 @keyframes bannerFloat{0%,100%{translate:0 0;}50%{translate:var(--motion-x,0) var(--motion-y,-6px);}}
-@keyframes bannerBgDrift{0%{transform:scale(1);}100%{transform:scale(1.04);}}
 @media (prefers-reduced-motion:reduce){.motion-enabled *{animation:none!important;}}
 </style>
 </head>

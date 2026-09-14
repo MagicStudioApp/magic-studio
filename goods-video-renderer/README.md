@@ -1,11 +1,11 @@
 # Magic Studio Goods video renderer
 
-Service Cloud Run dédié à l’export MP4 de `goods-video.html`.
+Service Cloud Run dédié à l’export MP4 des quatre formats Goods.
 
-- Entrée strictement limitée à `https://magicstudioapp.github.io/magic-studio/goods-video.html`.
+- Entrée strictement limitée aux gabarits Goods Web, Mobile, Story et Vertical hébergés sur `magicstudioapp.github.io`.
 - Images distantes limitées au compte Cloudinary de Magic Studio.
 - Jusqu’à 20 produits et 5 logos par composition.
-- Vidéo verticale 1080 × 1920, H.264, 20 images/s, 5 secondes.
+- Vidéos aux dimensions natives de chaque gabarit, H.264, 20 images/s, 5 secondes.
 - Une file de rendu par instance, une instance Cloud Run maximum recommandée.
 - Limite par défaut : 10 créations par adresse IP et par heure.
 - Suppression automatique des fichiers après 24 heures.

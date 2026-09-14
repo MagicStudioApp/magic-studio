@@ -22,6 +22,13 @@ const jobs = new Map();
 const requestHistory = new Map();
 let queue = Promise.resolve();
 
+const allowedTemplates = new Map([
+  ['/magic-studio/goods-desktop.html', {format: 'desktop', width: 1562, height: 395}],
+  ['/magic-studio/goods-mobile.html', {format: 'mobile', width: 700, height: 420}],
+  ['/magic-studio/goods-social.html', {format: 'social', width: 1080, height: 1920}],
+  ['/magic-studio/goods-video.html', {format: 'video', width: 1080, height: 1920}]
+]);
+
 app.disable('x-powered-by');
 app.use(cors({
   origin(origin, callback) {
@@ -57,7 +64,8 @@ function validateCloudinaryUrl(value) {
 
 function validateSourceUrl(value) {
   const source = new URL(String(value || ''));
-  if (source.protocol !== 'https:' || source.hostname !== 'magicstudioapp.github.io' || source.pathname !== '/magic-studio/goods-video.html') {
+  const template = allowedTemplates.get(source.pathname);
+  if (source.protocol !== 'https:' || source.hostname !== 'magicstudioapp.github.io' || !template) {
     throw new Error('Invalid Goods video URL');
   }
   if (source.href.length > 120_000) throw new Error('Goods video URL is too large');
@@ -85,12 +93,13 @@ function validateSourceUrl(value) {
       validateCloudinaryUrl(value);
     }
   }
-  return source.href;
+  return {sourceUrl: source.href, ...template};
 }
 
 function validatePayload(body) {
+  const source = validateSourceUrl(body.url);
   return {
-    sourceUrl: validateSourceUrl(body.url),
+    ...source,
     filename: String(body.filename || 'magic-studio-goods.mp4').replace(/[^a-z0-9._-]/gi, '-').slice(0, 120)
   };
 }
@@ -127,7 +136,7 @@ async function render(job, payload) {
   job.progress = 2;
   const browser = await chromium.launch({headless: true, args: ['--disable-dev-shm-usage', '--no-sandbox']});
   try {
-    const page = await browser.newPage({viewport: {width: 1080, height: 1920}, deviceScaleFactor: 1});
+    const page = await browser.newPage({viewport: {width: payload.width, height: payload.height}, deviceScaleFactor: 1});
     await page.goto(payload.sourceUrl, {waitUntil: 'networkidle', timeout: 60_000});
     await page.evaluate(async () => {
       if (document.fonts?.ready) await document.fonts.ready;

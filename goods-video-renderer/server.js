@@ -64,6 +64,22 @@ function validateSourceUrl(value) {
   const count = Number(source.searchParams.get('figure_count') || 1);
   if (!Number.isInteger(count) || count < 1 || count > 20) throw new Error('Invalid product count');
   if ((source.searchParams.get('series_text') || '').length > 500) throw new Error('Video text is too long');
+  const extraTextsValue = source.searchParams.get('extra_texts') || '[]';
+  if (extraTextsValue.length > 5000) throw new Error('Extra video text data is too large');
+  let extraTexts;
+  try {
+    extraTexts = JSON.parse(extraTextsValue);
+  } catch {
+    throw new Error('Invalid extra video text data');
+  }
+  if (!Array.isArray(extraTexts) || extraTexts.length > 8) throw new Error('Invalid extra video text count');
+  for (const text of extraTexts) {
+    if (!text || typeof text.text !== 'string' || text.text.length > 200) throw new Error('Invalid extra video text');
+    if (typeof text.id !== 'string' || text.id.length > 80) throw new Error('Invalid extra video text id');
+    for (const key of ['size', 'x', 'y', 'rot']) {
+      if (!Number.isFinite(Number(text[key]))) throw new Error('Invalid extra video text position');
+    }
+  }
   for (const [key, value] of source.searchParams) {
     if (key === 'bg_url' || key === 'background_reference_url' || /^figure\d+_url$/.test(key) || /^left[1-5]_url$/.test(key)) {
       validateCloudinaryUrl(value);

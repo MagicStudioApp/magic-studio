@@ -49,6 +49,7 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:60px;letter-spacing:2px;line-he
 .field textarea{min-height:78px;resize:vertical;line-height:1.35}
 .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent2)}
 .toggle-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+.toggle-row.logo-toggles{grid-template-columns:repeat(5,1fr)}
 .toggle-pill{display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:10px 12px;color:var(--muted);font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase}
 .toggle-pill input{accent-color:var(--accent2)}
 .glow-control{display:flex;align-items:center;gap:10px}
@@ -118,7 +119,7 @@ iframe{width:100%;border:0;display:block;transform-origin:top left}
   <div class="header">
     <span class="header-eyebrow">GOODS TEMPLATE</span>
     <h1>PRODUCT<br>GENERATOR</h1>
-    <p>Template produits sans texte : 3 visuels à gauche, 1 à 15 produits détourables, formats web / mobile / story.</p>
+    <p>Template produits sans texte : 5 logos, 1 à 20 produits détourables, formats web / mobile / story.</p>
     <div class="template-switch">
       <a href="index.html">Banner TCG</a>
       <a href="goods.html" class="active">Goods / Produits</a>
@@ -126,8 +127,8 @@ iframe{width:100%;border:0;display:block;transform-origin:top left}
   </div>
 
   <div class="card">
-    <div class="card-title"><span class="num">1</span> Visuels de gauche</div>
-    <div class="upload-grid">
+    <div class="card-title"><span class="num">1</span> Logos / visuels de gauche</div>
+    <div class="upload-grid five logo-upload-grid">
       <div class="upload-zone" id="zone-left1">
         <input type="file" accept="image/*" onchange="uploadToCloudinary(this,'left1_url','zone-left1','prev-left1')">
         <span class="upload-icon">🏷️</span><div class="spinner-small" style="display:none" id="spin-left1"></div><img class="preview-img" id="prev-left1">
@@ -143,11 +144,23 @@ iframe{width:100%;border:0;display:block;transform-origin:top left}
         <span class="upload-icon">🟧</span><div class="spinner-small" style="display:none" id="spin-left3"></div><img class="preview-img" id="prev-left3">
         <span class="upload-label">Image gauche 3</span><span class="upload-sub">Bouton / label - détourable</span>
       </div>
+      <div class="upload-zone" id="zone-left4">
+        <input type="file" accept="image/*" onchange="uploadToCloudinary(this,'left4_url','zone-left4','prev-left4')">
+        <span class="upload-icon">✨</span><div class="spinner-small" style="display:none" id="spin-left4"></div><img class="preview-img" id="prev-left4">
+        <span class="upload-label">Image gauche 4</span><span class="upload-sub">Logo complémentaire - détourable</span>
+      </div>
+      <div class="upload-zone" id="zone-left5">
+        <input type="file" accept="image/*" onchange="uploadToCloudinary(this,'left5_url','zone-left5','prev-left5')">
+        <span class="upload-icon">⭐</span><div class="spinner-small" style="display:none" id="spin-left5"></div><img class="preview-img" id="prev-left5">
+        <span class="upload-label">Image gauche 5</span><span class="upload-sub">Logo complémentaire - détourable</span>
+      </div>
     </div>
-    <div class="toggle-row">
+    <div class="toggle-row logo-toggles">
       <label class="toggle-pill"><input type="checkbox" id="show_left1" checked onchange="sendToIframe()"> Afficher logo 1</label>
       <label class="toggle-pill"><input type="checkbox" id="show_left2" checked onchange="sendToIframe()"> Afficher logo 2</label>
       <label class="toggle-pill"><input type="checkbox" id="show_left3" checked onchange="sendToIframe()"> Afficher logo 3</label>
+      <label class="toggle-pill"><input type="checkbox" id="show_left4" checked onchange="sendToIframe()"> Afficher logo 4</label>
+      <label class="toggle-pill"><input type="checkbox" id="show_left5" checked onchange="sendToIframe()"> Afficher logo 5</label>
     </div>
     <div class="product-controls logo-controls">
       <div class="product-control">
@@ -170,6 +183,20 @@ iframe{width:100%;border:0;display:block;transform-origin:top left}
         <div class="slider-row"><div class="slider-label"><span>Gauche / Droite</span><span class="val" id="val-left3-x">0px</span></div><input type="range" id="left3-x" min="-300" max="300" value="0" oninput="onElementSlider(this)"></div>
         <div class="slider-row"><div class="slider-label"><span>Haut / Bas</span><span class="val" id="val-left3-y">0px</span></div><input type="range" id="left3-y" min="-220" max="220" value="0" oninput="onElementSlider(this)"></div>
         <div class="slider-row"><div class="slider-label"><span>Rotation</span><span class="val" id="val-left3-rot">0°</span></div><input type="range" id="left3-rot" min="-180" max="180" value="0" oninput="onElementSlider(this)"></div>
+      </div>
+      <div class="product-control">
+        <div class="product-control-title">Logo 4</div>
+        <div class="slider-row"><div class="slider-label"><span>Taille</span><span class="val" id="val-left4-size">100%</span></div><input type="range" id="left4-size" min="40" max="220" value="100" oninput="onElementSlider(this)"></div>
+        <div class="slider-row"><div class="slider-label"><span>Gauche / Droite</span><span class="val" id="val-left4-x">0px</span></div><input type="range" id="left4-x" min="-300" max="300" value="0" oninput="onElementSlider(this)"></div>
+        <div class="slider-row"><div class="slider-label"><span>Haut / Bas</span><span class="val" id="val-left4-y">0px</span></div><input type="range" id="left4-y" min="-220" max="220" value="0" oninput="onElementSlider(this)"></div>
+        <div class="slider-row"><div class="slider-label"><span>Rotation</span><span class="val" id="val-left4-rot">0°</span></div><input type="range" id="left4-rot" min="-180" max="180" value="0" oninput="onElementSlider(this)"></div>
+      </div>
+      <div class="product-control">
+        <div class="product-control-title">Logo 5</div>
+        <div class="slider-row"><div class="slider-label"><span>Taille</span><span class="val" id="val-left5-size">100%</span></div><input type="range" id="left5-size" min="40" max="220" value="100" oninput="onElementSlider(this)"></div>
+        <div class="slider-row"><div class="slider-label"><span>Gauche / Droite</span><span class="val" id="val-left5-x">0px</span></div><input type="range" id="left5-x" min="-300" max="300" value="0" oninput="onElementSlider(this)"></div>
+        <div class="slider-row"><div class="slider-label"><span>Haut / Bas</span><span class="val" id="val-left5-y">0px</span></div><input type="range" id="left5-y" min="-220" max="220" value="0" oninput="onElementSlider(this)"></div>
+        <div class="slider-row"><div class="slider-label"><span>Rotation</span><span class="val" id="val-left5-rot">0°</span></div><input type="range" id="left5-rot" min="-180" max="180" value="0" oninput="onElementSlider(this)"></div>
       </div>
     </div>
   </div>
@@ -195,6 +222,11 @@ iframe{width:100%;border:0;display:block;transform-origin:top left}
           <option value="13">13 produits</option>
           <option value="14">14 produits</option>
           <option value="15">15 produits</option>
+          <option value="16">16 produits</option>
+          <option value="17">17 produits</option>
+          <option value="18">18 produits</option>
+          <option value="19">19 produits</option>
+          <option value="20">20 produits</option>
         </select>
       </div>
       <div class="field">
@@ -221,7 +253,7 @@ iframe{width:100%;border:0;display:block;transform-origin:top left}
       <span>📦 Ajouter plusieurs produits en une fois</span>
     </label>
     <div class="bulk-upload-status" id="bulkUploadStatus" role="status" aria-live="polite"></div>
-    <div class="upload-grid five">
+    <div class="upload-grid five product-upload-grid">
       <div class="upload-zone fig-zone" id="zone-fig1">
         <input type="file" accept="image/*" onchange="uploadToCloudinary(this,'figure1_url','zone-fig1','prev-fig1')">
         <span class="upload-icon">🧍</span><div class="spinner-small" style="display:none" id="spin-fig1"></div><img class="preview-img" id="prev-fig1">
@@ -425,7 +457,8 @@ const MAKE_WEBHOOK_URL = "https://hook.eu1.make.com/62irmz92j6x8l6a4d1v9mnpxfbtm
 // locale file://. Les pages de rendu utilisent donc toujours leur adresse
 // publique, même lorsque le formulaire est testé depuis le Mac.
 const BASE_URL = 'https://magicstudioapp.github.io/magic-studio';
-const MAX_PRODUCTS = 15;
+const MAX_PRODUCTS = 20;
+const MAX_LOGOS = 5;
 const EDITOR_MARGIN = 140;
 const urls = {};
 let currentGoodsTab = 'desktop';
@@ -438,7 +471,7 @@ const goodsConfig = {
 const defaultFormatControls = {};
 
 function extendProductFields() {
-  const uploadGrid = document.querySelector('.upload-grid.five');
+  const uploadGrid = document.querySelector('.product-upload-grid');
   const controlsGrid = document.querySelector('.product-controls:not(.logo-controls)');
   for (let i = 6; i <= MAX_PRODUCTS; i++) {
     uploadGrid.insertAdjacentHTML('beforeend', `
@@ -460,7 +493,7 @@ function extendProductFields() {
 }
 extendProductFields();
 
-for (let i = 1; i <= 3; i++) {
+for (let i = 1; i <= MAX_LOGOS; i++) {
   defaultFormatControls['left' + i + '_size'] = '100';
   defaultFormatControls['left' + i + '_x'] = '0';
   defaultFormatControls['left' + i + '_y'] = '0';
@@ -500,12 +533,6 @@ function getParams(kind = currentGoodsTab) {
     fallback_bg:document.getElementById('fallback_bg').value,
     fallback_bg2:document.getElementById('fallback_bg2').value,
     bg_url:backgroundMode === 'upload' ? (urls.bg_url || '') : '',
-    left1_url:urls.left1_url || '',
-    left2_url:urls.left2_url || '',
-    left3_url:urls.left3_url || '',
-    show_left1:document.getElementById('show_left1').checked ? '1' : '0',
-    show_left2:document.getElementById('show_left2').checked ? '1' : '0',
-    show_left3:document.getElementById('show_left3').checked ? '1' : '0',
     product_glow:document.getElementById('product_glow_enabled').checked ? document.getElementById('product_glow').value : 'transparent',
     series_text:document.getElementById('series_text').value,
     series_text_color:document.getElementById('series_text_color').value,
@@ -514,6 +541,10 @@ function getParams(kind = currentGoodsTab) {
     animSpeed:document.getElementById('animation-speed').value,
     ...formatControls[kind]
   };
+  for (let i = 1; i <= MAX_LOGOS; i++) {
+    params['left' + i + '_url'] = urls['left' + i + '_url'] || '';
+    params['show_left' + i] = document.getElementById('show_left' + i).checked ? '1' : '0';
+  }
   for (let i = 1; i <= MAX_PRODUCTS; i++) params['figure' + i + '_url'] = urls['figure' + i + '_url'] || '';
   return params;
 }
@@ -526,7 +557,7 @@ function onGoodsAnimationControl() {
 
 function saveControlsForFormat(kind = currentGoodsTab) {
   const controls = formatControls[kind];
-  for (let i = 1; i <= 3; i++) {
+  for (let i = 1; i <= MAX_LOGOS; i++) {
     ['size', 'x', 'y', 'rot'].forEach(prop => {
       const el = document.getElementById('left' + i + '-' + prop);
       if (el) controls['left' + i + '_' + prop] = el.value;
@@ -573,7 +604,7 @@ function updateMovementRanges(kind) {
   const horizontalLimit = cfg.w;
   const verticalLimit = cfg.h;
   const movementControls = [];
-  for (let i = 1; i <= 3; i++) {
+  for (let i = 1; i <= MAX_LOGOS; i++) {
     movementControls.push(document.getElementById('left' + i + '-x'));
     movementControls.push(document.getElementById('left' + i + '-y'));
   }
@@ -985,7 +1016,7 @@ function wirePreviewInteraction() {
   if (doc.__goodsInteractionWired) return;
   doc.__goodsInteractionWired = true;
   installProductEditor(doc);
-  for (let i = 1; i <= 3; i++) bindGoodsDraggable(doc.querySelector('.left' + i), 'left', i);
+  for (let i = 1; i <= MAX_LOGOS; i++) bindGoodsDraggable(doc.querySelector('.left' + i), 'left', i);
   for (let i = 1; i <= MAX_PRODUCTS; i++) bindGoodsDraggable(doc.querySelector('.fig' + i), 'product', i);
   if (currentGoodsTab !== 'social' && currentGoodsTab !== 'video') return;
   const prefix = currentGoodsTab === 'social' ? 'story' : 'video';

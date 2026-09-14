@@ -6,6 +6,8 @@ Service Cloud Run dédié à l’export MP4 des quatre formats Goods.
 - Images distantes limitées au compte Cloudinary de Magic Studio.
 - Jusqu’à 20 produits et 5 logos par composition.
 - Vidéos aux dimensions natives de chaque gabarit, H.264, 20 images/s, 5 secondes.
+- Les formats sélectionnés sont regroupés côté serveur dans un ZIP téléchargé automatiquement par l’interface.
+- Le texte principal « Maintenant disponible » des formats Web et Mobile conserve sa police, sa couleur, sa position, sa taille et sa rotation dans le MP4.
 - Une file de rendu par instance, une instance Cloud Run maximum recommandée.
 - Limite par défaut : 10 créations par adresse IP et par heure.
 - Suppression automatique des fichiers après 24 heures.

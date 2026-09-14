@@ -72,6 +72,7 @@ function validateSourceUrl(value) {
   const count = Number(source.searchParams.get('figure_count') || 1);
   if (!Number.isInteger(count) || count < 1 || count > 20) throw new Error('Invalid product count');
   if ((source.searchParams.get('series_text') || '').length > 500) throw new Error('Video text is too long');
+  if ((source.searchParams.get('banner_text') || '').length > 500) throw new Error('Banner text is too long');
   const extraTextsValue = source.searchParams.get('extra_texts') || '[]';
   if (extraTextsValue.length > 5000) throw new Error('Extra video text data is too large');
   let extraTexts;
@@ -102,6 +103,19 @@ function validatePayload(body) {
     ...source,
     filename: String(body.filename || 'magic-studio-goods.mp4').replace(/[^a-z0-9._-]/gi, '-').slice(0, 120)
   };
+}
+
+function getCompletedJobs(value) {
+  const ids = String(value || '').split(',').map(id => id.trim()).filter(Boolean);
+  const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+  if (!ids.length || ids.length > 4 || new Set(ids).size !== ids.length || ids.some(id => !uuidPattern.test(id))) {
+    throw new Error('Invalid video jobs');
+  }
+  return ids.map(id => {
+    const job = jobs.get(id);
+    if (!job || job.status !== 'completed' || !job.outputPath) throw new Error('A video is not available');
+    return job;
+  });
 }
 
 function rateLimit(req, res, next) {
@@ -206,6 +220,33 @@ app.post('/api/goods-video-jobs', rateLimit, (req, res) => {
     enqueue(job, payload);
     res.status(202).json(publicJob(job));
   } catch (error) {
+    res.status(400).json({error: error.message});
+  }
+});
+
+app.get('/api/goods-video-zip', async (req, res, next) => {
+  let directory;
+  try {
+    const selectedJobs = getCompletedJobs(req.query.jobs);
+    let filename = String(req.query.filename || 'magic-studio-goods.zip').replace(/[^a-z0-9._-]/gi, '-').slice(0, 120);
+    if (!filename.toLowerCase().endsWith('.zip')) filename += '.zip';
+    directory = await fs.mkdtemp(path.join(os.tmpdir(), 'goods-video-zip-'));
+    const filenames = [];
+    for (const [index, job] of selectedJobs.entries()) {
+      const safeName = String(job.filename || `video-${index + 1}.mp4`).replace(/[^a-z0-9._-]/gi, '-');
+      const storedName = `${index + 1}-${safeName}`;
+      await fs.copyFile(job.outputPath, path.join(directory, storedName));
+      filenames.push(storedName);
+    }
+    const zipPath = path.join(directory, 'archive.zip');
+    await run('zip', ['-q', zipPath, ...filenames], {cwd: directory});
+    res.download(zipPath, filename, error => {
+      fs.rm(directory, {recursive: true, force: true}).catch(() => {});
+      if (error && !res.headersSent) next(error);
+    });
+  } catch (error) {
+    if (directory) await fs.rm(directory, {recursive: true, force: true}).catch(() => {});
+    if (res.headersSent) return next(error);
     res.status(400).json({error: error.message});
   }
 });

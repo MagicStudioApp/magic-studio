@@ -1,0 +1,6 @@
+.git
+**/node_modules
+**/.playwright-browsers
+**/.test-python
+**/*.mp4
+**/frame-*.jpg

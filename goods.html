@@ -131,7 +131,7 @@ iframe{width:100%;border:0;display:block;transform-origin:top left}
 @media(max-width:900px){.product-controls,.editor-layout.vertical .product-controls{grid-template-columns:1fr 1fr}}
 @media(max-width:760px){body{padding:20px 10px 40px}.header{margin-bottom:18px}.upload-grid,.upload-grid.five,.field-row,.product-controls,.editor-layout.vertical .product-controls,.toggle-row{grid-template-columns:1fr}.card{padding:22px}h1{font-size:48px}}
 </style>
-</head>
+<script src="/studio-login.js" defer></script></head>
 <body>
 <div class="container">
   <div class="header">
@@ -514,9 +514,9 @@ iframe{width:100%;border:0;display:block;transform-origin:top left}
 </div>
 
 <script>
-const CLOUD_NAME = "dyvmftiyu";
-const UPLOAD_PRESET = "banner_generator";
-const MAKE_WEBHOOK_URL = "https://hook.eu1.make.com/62irmz92j6x8l6a4d1v9mnpxfbtmlwmu";
+
+
+const MAKE_WEBHOOK_URL = '/api/make/goods';
 // Doppio s'exécute sur un serveur distant et ne peut jamais ouvrir une URL
 // locale file://. Les pages de rendu utilisent donc toujours leur adresse
 // publique, même lorsque le formulaire est testé depuis le Mac.
@@ -778,8 +778,8 @@ async function uploadToCloudinary(input, key, zoneId, prevId) {
 
     const fd = new FormData();
     fd.append('file', file);
-    fd.append('upload_preset', UPLOAD_PRESET);
-    const res = await fetch('https://api.cloudinary.com/v1_1/' + CLOUD_NAME + '/image/upload', {method:'POST', body:fd});
+
+    const res = await fetch('/api/uploads', {method:'POST', body:fd});
     const data = await res.json();
     if (!data.secure_url) throw new Error(data.error?.message || 'Upload failed');
     urls[key] = data.secure_url;
@@ -1351,8 +1351,8 @@ function setHdStatus(message, type) {
   box.className = 'hd-status show' + (type ? ' ' + type : '');
 }
 
-const GOODS_STATUS_WEBHOOK_URL = 'https://hook.eu1.make.com/461my7gj6h9uwh9ff2i9wyqvdfaksyz1';
-const GOODS_VIDEO_RENDER_URL = 'https://magic-studio-video-643107855979.europe-west1.run.app';
+const GOODS_STATUS_WEBHOOK_URL = '/api/make/goods/status';
+const GOODS_VIDEO_RENDER_URL = '';
 let goodsHdPollTimer = null;
 let goodsVideoJobId = null;
 let goodsVideoExportActive = false;

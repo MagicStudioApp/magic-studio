@@ -9,6 +9,9 @@ COPY goods-video-renderer/package.json goods-video-renderer/pnpm-lock.yaml ./
 RUN npm install -g pnpm@11.19.0 \
   && pnpm install --frozen-lockfile --prod
 COPY goods-video-renderer/server.js ./
+COPY goods-video-renderer/studio-security.js ./
+
+COPY *.html studio-login.js ./public/
 
 ENV NODE_ENV=production
 ENV PORT=8080

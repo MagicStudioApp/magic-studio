@@ -3,7 +3,7 @@ import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import {spawn} from 'node:child_process';
-import cors from 'cors';
+import {installSecurity, installMakeRelay, installUploads} from './studio-security.js';
 import express from 'express';
 import {chromium} from 'playwright';
 
@@ -12,12 +12,6 @@ const port = Number(process.env.PORT || 8080);
 const ffmpegPath = process.env.FFMPEG_PATH || 'ffmpeg';
 const retentionMs = Math.max(15 * 60 * 1000, Number(process.env.RETENTION_MS || 24 * 60 * 60 * 1000));
 const maxJobsPerHour = Math.max(1, Number(process.env.MAX_JOBS_PER_HOUR || 10));
-const allowedOrigins = new Set(
-  String(process.env.ALLOWED_ORIGINS || 'https://magicstudioapp.github.io')
-    .split(',')
-    .map(value => value.trim())
-    .filter(Boolean)
-);
 const jobs = new Map();
 const requestHistory = new Map();
 let queue = Promise.resolve();
@@ -29,18 +23,15 @@ const allowedTemplates = new Map([
   ['/magic-studio/goods-video.html', {format: 'video', width: 1080, height: 1920}]
 ]);
 
-app.disable('x-powered-by');
-app.use(cors({
-  origin(origin, callback) {
-    if (!origin || allowedOrigins.has(origin) || (process.env.NODE_ENV !== 'production' && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(origin))) {
-      callback(null, true);
-      return;
-    }
-    callback(new Error('Origin not allowed'));
-  },
-  methods: ['GET', 'POST', 'DELETE', 'OPTIONS'],
-  credentials: false
-}));
+const security=installSecurity(app,express);
+installMakeRelay(app,express,{
+  '/api/make/goods':'MAKE_GOODS_URL',
+  '/api/make/goods/status':'MAKE_GOODS_STATUS_URL',
+  '/api/make/tcg':'MAKE_TCG_URL',
+  '/api/make/tcg/status':'MAKE_TCG_STATUS_URL',
+  '/api/make/background':'MAKE_BACKGROUND_URL'
+});
+installUploads(app,express);
 app.use(express.json({limit: '256kb'}));
 
 function publicJob(job) {
@@ -119,7 +110,7 @@ function getCompletedJobs(value) {
 }
 
 function rateLimit(req, res, next) {
-  const key = req.ip || req.socket.remoteAddress || 'unknown';
+  const key = req.studioUser;
   const cutoff = Date.now() - 60 * 60 * 1000;
   const recent = (requestHistory.get(key) || []).filter(time => time > cutoff);
   if (recent.length >= maxJobsPerHour) {
@@ -215,7 +206,7 @@ app.post('/api/goods-video-jobs', rateLimit, (req, res) => {
   try {
     const payload = validatePayload(req.body);
     const id = crypto.randomUUID();
-    const job = {id, status: 'queued', progress: 0, createdAt: Date.now(), cancelled: false, abortController: new AbortController()};
+    const job = {id, owner: req.studioUser, status: 'queued', progress: 0, createdAt: Date.now(), cancelled: false, abortController: new AbortController()};
     jobs.set(id, job);
     enqueue(job, payload);
     res.status(202).json(publicJob(job));
@@ -228,6 +219,7 @@ app.get('/api/goods-video-zip', async (req, res, next) => {
   let directory;
   try {
     const selectedJobs = getCompletedJobs(req.query.jobs);
+    if(selectedJobs.some(job=>job.owner!==req.studioUser))return res.status(404).json({error:'Job not found'});
     let filename = String(req.query.filename || 'magic-studio-goods.zip').replace(/[^a-z0-9._-]/gi, '-').slice(0, 120);
     if (!filename.toLowerCase().endsWith('.zip')) filename += '.zip';
     directory = await fs.mkdtemp(path.join(os.tmpdir(), 'goods-video-zip-'));
@@ -253,13 +245,13 @@ app.get('/api/goods-video-zip', async (req, res, next) => {
 
 app.get('/api/goods-video-jobs/:id', (req, res) => {
   const job = jobs.get(req.params.id);
-  if (!job) return res.status(404).json({error: 'Job not found'});
+  if (!job || job.owner !== req.studioUser) return res.status(404).json({error: 'Job not found'});
   res.json(publicJob(job));
 });
 
 app.delete('/api/goods-video-jobs/:id', (req, res) => {
   const job = jobs.get(req.params.id);
-  if (!job) return res.status(404).json({error: 'Job not found'});
+  if (!job || job.owner !== req.studioUser) return res.status(404).json({error: 'Job not found'});
   if (!['completed', 'failed', 'cancelled'].includes(job.status)) {
     job.cancelled = true;
     job.status = 'cancelled';
@@ -270,7 +262,7 @@ app.delete('/api/goods-video-jobs/:id', (req, res) => {
 
 app.get('/api/goods-video-jobs/:id/download', (req, res) => {
   const job = jobs.get(req.params.id);
-  if (!job || job.status !== 'completed') return res.status(404).json({error: 'Video is not available'});
+  if (!job || job.owner !== req.studioUser || job.status !== 'completed') return res.status(404).json({error: 'Video is not available'});
   res.download(job.outputPath, job.filename);
 });
 
@@ -297,5 +289,16 @@ app.use((error, req, res, next) => {
   }
   next(error);
 });
+
+const publicDirectory=path.join(process.cwd(),'public');
+app.get(['/', '/index.html', '/goods.html'],(req,res)=>{
+  res.setHeader('Cache-Control','no-store');
+  security.sendEditor(req,res,path.join(publicDirectory,req.path==='/goods.html'?'goods.html':'index.html'));
+});
+const renderTemplates=['desktop-fr.html','desktop-en.html','mobile-fr.html','mobile-en.html','social-fr.html','social-en.html','goods-desktop.html','goods-mobile.html','goods-social.html','goods-video.html'];
+app.get(renderTemplates.map(file=>'/'+file),(req,res)=>res.sendFile(path.join(publicDirectory,path.basename(req.path))));
+app.get('/studio-login.js',(req,res)=>res.sendFile(path.join(publicDirectory,'studio-login.js')));
+// Restrict the served tree: server source, environment files and deployment docs are never public.
+app.use((req,res)=>res.status(404).end());
 
 app.listen(port, '0.0.0.0', () => console.log(`Magic Studio Goods video renderer listening on ${port}`));

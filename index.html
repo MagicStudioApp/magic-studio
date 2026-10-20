@@ -173,7 +173,7 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;hei
 @media(max-width:1050px){.sliders-grid{grid-template-columns:1fr 1fr;}}
 @media(max-width:720px){.editor-card{padding:12px}.sliders-grid{grid-template-columns:1fr}.editor-sticky{top:0}.banner-tab{flex:1;text-align:center;padding:7px 5px}.project-actions,.tool-row{grid-template-columns:1fr;}}
 </style>
-</head>
+<script src="/studio-login.js" defer></script></head>
 <body>
 <div class="container">
   <div class="header">
@@ -360,19 +360,7 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;hei
       </div>
     </div>
 
-    <details class="card advanced-config">
-      <summary><span class="card-title"><span class="num">4</span> <span data-i18n="advancedSettings">PARAMÈTRES AVANCÉS</span></span></summary>
-      <div class="advanced-config-content">
-        <div class="field">
-          <label data-i18n="makeWebhook">URL Webhook Make</label>
-          <input type="text" id="webhook_url" value="https://hook.eu1.make.com/p5xddqp8e69ikw4b16d3cv2hd49vu51n">
-        </div>
-        <div class="field" style="margin-top:12px;">
-          <label data-i18n="statusWebhook">URL Webhook de suivi HD</label>
-          <input type="text" id="status_webhook_url" data-i18n-placeholder="statusWebhookPlaceholder" placeholder="À coller après la création du scénario de suivi Make">
-        </div>
-      </div>
-    </details>
+    <input type="hidden" id="webhook_url" value="/api/make/tcg"><input type="hidden" id="status_webhook_url" value="/api/make/tcg/status">
 
     <div class="progress-bar" id="progressBar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
     <div class="progress-steps" id="progressSteps">
@@ -509,15 +497,18 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;hei
 </div>
 
 <script>
-const CLOUD_NAME = "dyvmftiyu";
-const UPLOAD_PRESET = "banner_generator";
-const BACKGROUND_WEBHOOK_URL = "https://hook.eu1.make.com/tc2y57ua2zq3bg62pq6oc8qtr1zha1oh";
-const BASE_URL = new URL('.', window.location.href).href.replace(/\/$/, '');
+const STUDIO_STORAGE_PREFIX='studio:'+String(window.STUDIO_USER||'guest')+':';
+const studioLocalStorage={getItem:key=>localStorage.getItem(STUDIO_STORAGE_PREFIX+key),setItem:(key,value)=>localStorage.setItem(STUDIO_STORAGE_PREFIX+key,value),removeItem:key=>localStorage.removeItem(STUDIO_STORAGE_PREFIX+key)};
+
+
+
+const BACKGROUND_WEBHOOK_URL = '/api/make/background';
+const BASE_URL = 'https://magicstudioapp.github.io/magic-studio';
 const TEMPLATE_VERSION = '20260724-palettes-projects-v1';
 const PALETTE_STORAGE_KEY = 'banner_color_palettes_v1';
 const PROJECT_STORAGE_KEY = 'banner_saved_projects_v1';
 const urls = {};
-const savedGeneratedBackground = localStorage.getItem('tcg_generated_background_url');
+const savedGeneratedBackground = studioLocalStorage.getItem('tcg_generated_background_url');
 if (savedGeneratedBackground) {
   urls.bg_url = savedGeneratedBackground;
   const savedBackgroundPreview = document.getElementById('prev-bg');
@@ -539,12 +530,6 @@ const builtInColorPresets = [
     colors:{col1:'#eeeeee',col2:'#b8b8b8',col3:'#eeeeee',col4:'#b8b8b8',col_outline:'#555555',col_glow:'#f4f4f4',col_glow2:'#b8b8b8'}
   }
 ];
-
-const savedStatusWebhook = localStorage.getItem('banner_status_webhook');
-if (savedStatusWebhook) document.getElementById('status_webhook_url').value = savedStatusWebhook;
-document.getElementById('status_webhook_url').addEventListener('change', function() {
-  localStorage.setItem('banner_status_webhook', this.value.trim());
-});
 
 const bannerConfig = {
   desktop_fr:{w:1562,h:395,scale:0.46,tpl:'desktop-fr.html'},
@@ -737,7 +722,7 @@ const uiTranslations = {
     syncStory:'Story FR と Story EN の設定を同期中。'
   }
 };
-let currentUiLang = localStorage.getItem('banner_ui_lang') || 'fr';
+let currentUiLang = studioLocalStorage.getItem('banner_ui_lang') || 'fr';
 function tr(key) {
   return (uiTranslations[currentUiLang] && uiTranslations[currentUiLang][key]) || uiTranslations.fr[key] || key;
 }
@@ -760,7 +745,7 @@ function applyUiLanguage() {
 }
 function setUiLanguage(lang) {
   currentUiLang = uiTranslations[lang] ? lang : 'fr';
-  localStorage.setItem('banner_ui_lang', currentUiLang);
+  studioLocalStorage.setItem('banner_ui_lang', currentUiLang);
   applyUiLanguage();
 }
 
@@ -792,12 +777,12 @@ function applyPalette(colors, message='Palette appliquée.') {
 }
 
 function getCustomPalettes() {
-  try { return JSON.parse(localStorage.getItem(PALETTE_STORAGE_KEY) || '[]'); }
+  try { return JSON.parse(studioLocalStorage.getItem(PALETTE_STORAGE_KEY) || '[]'); }
   catch(e) { return []; }
 }
 
 function setCustomPalettes(palettes) {
-  localStorage.setItem(PALETTE_STORAGE_KEY, JSON.stringify(palettes));
+  studioLocalStorage.setItem(PALETTE_STORAGE_KEY, JSON.stringify(palettes));
 }
 
 function renderColorPresets() {
@@ -1006,12 +991,12 @@ function getProjectTitle(project) {
 }
 
 function getSavedProjects() {
-  try { return JSON.parse(localStorage.getItem(PROJECT_STORAGE_KEY) || '[]'); }
+  try { return JSON.parse(studioLocalStorage.getItem(PROJECT_STORAGE_KEY) || '[]'); }
   catch(e) { return []; }
 }
 
 function setSavedProjects(projects) {
-  localStorage.setItem(PROJECT_STORAGE_KEY, JSON.stringify(projects));
+  studioLocalStorage.setItem(PROJECT_STORAGE_KEY, JSON.stringify(projects));
 }
 
 function renderSavedProjects() {
@@ -1202,7 +1187,7 @@ function createJobId() {
 async function pollHdResult(jobId, startedAt) {
   const status=document.getElementById('hdStatus');
   const btn=document.getElementById('btnHD');
-  const statusUrl=document.getElementById('status_webhook_url').value.trim();
+  const statusUrl='/api/make/tcg/status';
   if(!statusUrl) {
     status.textContent='Ajoute l’URL du webhook de suivi HD dans Configuration.';
     status.className='hd-status show';
@@ -1267,11 +1252,11 @@ function applyProcessedAssets(data) {
   return applied;
 }
 
-function buildIframeUrl(tab) {
+function buildIframeUrl(tab, preview = false) {
   const cfg = bannerConfig[tab];
   const ov = overrides[tab];
   const p = {...getParams(), ...ov, template_version:TEMPLATE_VERSION};
-  return BASE_URL+'/'+cfg.tpl+'?'+new URLSearchParams(p).toString();
+  return (preview ? new URL(cfg.tpl, location.href).href : BASE_URL+'/'+cfg.tpl)+'?'+new URLSearchParams(p).toString();
 }
 
 function onAnimationControl() {
@@ -1307,14 +1292,14 @@ function loadIframe(tab) {
   iframe.style.transform = 'scale('+cfg.scale+')';
   iframe.style.transformOrigin = 'top left';
   wrap.style.height = Math.round(cfg.h*cfg.scale)+'px';
-  iframe.onload = () => { 
+  iframe.onload = () => {
     iframeReady = true;
     requestAnimationFrame(() => {
       applyLiveOverrides();
       wireBannerDragging();
     });
   };
-  iframe.src = buildIframeUrl(tab);
+  iframe.src = buildIframeUrl(tab, true);
 }
 
 let debounceTimer = null;
@@ -1527,8 +1512,8 @@ async function uploadToCloudinary(input, key, zoneId, prevId, prevLargeId) {
   zone.classList.add('uploading');zone.classList.remove('has-file','error');
   if(spin)spin.style.display='block';label.textContent='Upload...';
   try {
-    const fd=new FormData();fd.append('file',file);fd.append('upload_preset',UPLOAD_PRESET);
-    const res=await fetch('https://api.cloudinary.com/v1_1/'+CLOUD_NAME+'/image/upload',{method:'POST',body:fd});
+    const fd=new FormData();fd.append('file',file);
+    const res=await fetch('/api/uploads',{method:'POST',body:fd});
     const data=await res.json();
     if(data.secure_url){
       urls[key]=data.secure_url;
@@ -1547,7 +1532,7 @@ const BACKGROUND_DAILY_LIMIT=5;
 function backgroundUsageToday() {
   const today=new Date().toISOString().slice(0,10);
   let saved={date:today,count:0};
-  try{saved=JSON.parse(localStorage.getItem('tcg_background_usage')||'null')||saved;}catch(_){}
+  try{saved=JSON.parse(studioLocalStorage.getItem('tcg_background_usage')||'null')||saved;}catch(_){}
   if(saved.date!==today) saved={date:today,count:0};
   return saved;
 }
@@ -1567,7 +1552,7 @@ function resetBackgroundGenerationQuota() {
     return;
   }
   const today=new Date().toISOString().slice(0,10);
-  localStorage.setItem('tcg_background_usage',JSON.stringify({date:today,count:0}));
+  studioLocalStorage.setItem('tcg_background_usage',JSON.stringify({date:today,count:0}));
   updateBackgroundGenerationStatus('✅ Quota réinitialisé.');
   window.alert('Quota réinitialisé : 5 générations disponibles.');
 }
@@ -1672,8 +1657,8 @@ async function uploadGeneratedBackground(buffer, mimeType) {
   const extension = mimeType === 'image/jpeg' ? 'jpg' : mimeType.split('/')[1];
   const formData = new FormData();
   formData.append('file', new Blob([buffer], {type:mimeType}), 'fond-openai.'+extension);
-  formData.append('upload_preset', UPLOAD_PRESET);
-  const uploadResponse = await fetch('https://api.cloudinary.com/v1_1/'+CLOUD_NAME+'/image/upload', {
+
+  const uploadResponse = await fetch('/api/uploads', {
     method:'POST',
     body:formData
   });
@@ -1727,9 +1712,9 @@ async function generateBackgroundIfNeeded(force=false) {
   if(!generatedUrl) throw new Error('Make n’a renvoyé ni image ni URL exploitable.');
   await verifyBackgroundImage(generatedUrl);
   urls.bg_url=generatedUrl;
-  localStorage.setItem('tcg_generated_background_url',generatedUrl);
+  studioLocalStorage.setItem('tcg_generated_background_url',generatedUrl);
   usage.count+=1;
-  localStorage.setItem('tcg_background_usage',JSON.stringify(usage));
+  studioLocalStorage.setItem('tcg_background_usage',JSON.stringify(usage));
   const preview=document.getElementById('prev-bg');
   if(preview) preview.src=generatedUrl;
   sendToIframe();
@@ -1761,7 +1746,7 @@ document.getElementById('bannerForm').addEventListener('submit', async function(
   const missing=required.filter(k=>!urls[k]);
   if(missing.length){errorMsg.textContent='Images manquantes : '+missing.map(k=>k.replace('_url','')).join(', ');errorMsg.classList.add('show');return;}
   errorMsg.classList.remove('show');
-  const webhookUrl=document.getElementById('webhook_url').value.trim();
+  const webhookUrl='/api/make/tcg';
   btn.classList.add('loading');btn.disabled=true;result.classList.remove('show');
 
   document.getElementById('progressBar').classList.add('show');
@@ -1827,8 +1812,8 @@ async function generateHD() {
   status.className='hd-status';
   status.textContent='';
   btn.disabled=true;btn.textContent='⏳ GÉNÉRATION EN COURS...';
-  const webhookUrl=document.getElementById('webhook_url').value.trim();
-  const statusUrl=document.getElementById('status_webhook_url').value.trim();
+  const webhookUrl='/api/make/tcg';
+  const statusUrl='/api/make/tcg/status';
   if(!statusUrl){
     btn.disabled=false;
     btn.textContent='🚀 GÉNÉRER EN HD AVEC CES RÉGLAGES';

@@ -14,6 +14,9 @@ Service Cloud Run dédié à l’export MP4 des quatre formats Goods.
 
 ## Déploiement
 
+Suivre d’abord [la migration de sécurité](../SECURITY-MIGRATION.md). La commande historique ci-dessous ne configure pas les nouveaux secrets : le serveur refuse désormais de démarrer en production sans `STUDIO_ORIGIN`, `STUDIO_SESSION_SECRET` et `STUDIO_ACCOUNTS_JSON`. Déployer sans trafic et tester avant bascule.
+
+
 Construire l’image depuis la racine du dépôt :
 
 ```sh
